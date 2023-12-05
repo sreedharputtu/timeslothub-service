@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	handler "github.com/sreedharputtu/timeslothub-service/internal"
+	"github.com/sreedharputtu/timeslothub-service/internal/handler"
 )
 
 func main() {

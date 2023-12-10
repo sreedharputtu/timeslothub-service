@@ -8,7 +8,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o /timeslothub-service cmd/service/main.go
+RUN go build -o /timeslothub-service main.go
 
 EXPOSE 8080
 

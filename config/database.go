@@ -1,8 +1,6 @@
-package model
+package config
 
 import (
-	"fmt"
-
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -16,6 +14,6 @@ const (
 )
 
 func Database() (*gorm.DB, error) {
-	sqlUrl := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, db)
-	return gorm.Open(postgres.Open(sqlUrl), &gorm.Config{})
+	dsn := "host=localhost user=dbwriter password=dbwriter dbname=timeslotdb port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
 }

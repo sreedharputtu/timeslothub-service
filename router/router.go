@@ -9,6 +9,8 @@ func NewRouter(rh *handler.RequestHandler) *gin.Engine {
 	r := gin.Default()
 	r.LoadHTMLGlob("./html/templates/**")
 
+	r.Static("/images", "./html/images")
+
 	rg := r.Group("/api/v1")
 	rg.POST("/users", rh.SaveUser)
 	rg.PUT("/users/:user_id")

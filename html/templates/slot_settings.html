@@ -1,6 +1,6 @@
 <div id="slot_settings">
-   <form class="pure-form pure-form-stacked" hx-post="/api/v1/slots/settings" hx-target="#slot_settings_table">
-    <legend> time slot settings </legend>
+    <form class="pure-form pure-form-stacked" hx-post="/api/v1/slots/settings" hx-target="#slot_settings_table">
+        <legend> time slot settings </legend>
         <label for="day_of_week">day of week</label>
         <select id="day_of_week" class="pure-input-1-2">
             <option>SUNDAY</option>
@@ -12,12 +12,12 @@
             <option>SATURDAY</option>
         </select>
         <label for="start_time">start time</label>
-        <input type="text" name="start_time" id="start_time"/>
+        <input type="text" name="start_time" id="start_time">
         <label for="end_time">end time</label>
-        <input type="text" name="end_time" id="end_time"/>
+        <input type="text" name="end_time" id="end_time">
         <button type="submit" class="pure-button pure-button-primary"> add </button>
     </form>
 </div>
 <div id="slot_settings_table">
- slot table
+    slot table
 </div>

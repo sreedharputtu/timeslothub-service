@@ -12,7 +12,8 @@ func main() {
 	if err != nil {
 		//panic
 	}
-	userRepo := repository.NewUserRepository(db)
-	rh := handler.NewRequestHandler(userRepo)
+	ur := repository.NewUserRepository(db)
+	ssr := repository.NewSlotSettingsRepository(db)
+	rh := handler.NewRequestHandler(ur, ssr)
 	router.NewRouter(rh).Run()
 }

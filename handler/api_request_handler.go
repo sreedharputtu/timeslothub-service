@@ -3,7 +3,8 @@ package handler
 import (
 	"net/http"
 	"regexp"
-	"time"
+	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/labstack/gommon/log"
@@ -65,14 +66,16 @@ func (r *RequestHandler) SaveSlotSettings(c *gin.Context) {
 		return
 	}
 
-	start, err := time.Parse("15:04", startTime)
-	end, err := time.Parse("15:04", endTime)
+	start, _ := strconv.Atoi(strings.Replace(startTime, ":", "", -1))
+	end, _ := strconv.Atoi(strings.Replace(endTime, ":", "", -1))
 
-	if start.Compare(end) > 0 {
+	if start > end {
 		log.Error("compare failure")
 		c.Status(400)
 		return
 	}
+
+	log.Debug("day_of_week:", dayOfWeek)
 
 	slotSettings := model.SlotSettings{
 		DayOfWeek: dayOfWeek,
@@ -85,7 +88,13 @@ func (r *RequestHandler) SaveSlotSettings(c *gin.Context) {
 		c.Status(500)
 		return
 	}
-	c.HTML(201, "slot_settings_table.html", nil)
+
+	sslist, _ := r.slotSettingsRepository.FindAll()
+	ssdtolist := convertSlotSettings(sslist)
+
+	c.HTML(201, "slot_settings_table.html", gin.H{
+		"SlotSettingsList": ssdtolist,
+	})
 }
 
 func (r *RequestHandler) UpdateCalenderSettings(c *gin.Context) {

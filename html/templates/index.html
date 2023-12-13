@@ -1,35 +1,37 @@
 <html>
-
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://unpkg.com/htmx.org@1.9.9"
         integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX"
         crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
-        integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
 </head>
-
 <body>
-    <div id="header" class="pure-g" style="justify-content: center;">
-        <img src="/images/timeslothub.png" class="pure-img" style="max-width: 168px;max-height: 100px;">
-    </div>
-    <div id="main_container" class="pure-g">
-        <div class="pure-u-1-3">
-            <div id="menu" class="pure-menu pure-menu-horizontal">
-                <ul class="pure-menu-list">
-                    <li><a hx-get="/views/calendars/settings" hx-target="#main_div" class="pure-menu-link">calendar
-                            settings</a></li>
-                    <li><a hx-get="/views/slots/settings" hx-target="#main_div" class="pure-menu-link">slot settings</a>
-                    </li>
-                    <li><a hx-get="/views/slots/bookings" hx-target="#main_div" class="pure-menu-link">bookings</a></li>
-                </ul>
+    <header class="container">
+                <nav>
+                    <ul>
+                        <li><strong>TimeslotHub</strong></li>
+                    </ul>
+                    <ul>
+                        <li><a hx-get="/views/calendars/settings" hx-target="#main_div">calendar
+                                settings</a></li>
+                        <li><a hx-get="/views/slots/settings" hx-target="#main_div">slot
+                                settings</a>
+                        </li>
+                        <li><a hx-get="/views/slots/bookings" hx-target="#main_div">bookings</a>
+                        </li>
+                    </ul>
+                </nav>
+    </header>
+    <main class="container">
+        <div class="grid">
+
+            <div id="main_div">
             </div>
         </div>
-        <div id="main_div" class="pure-u-3-5">
-        </div>
-    </div>
-    <div id="footer">
-    </div>
+    </main>
+    <footer class="container">
+        footer
+    </footer>
 </body>
-
 </html>

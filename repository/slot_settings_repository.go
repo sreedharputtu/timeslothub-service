@@ -7,6 +7,7 @@ import (
 
 type SlotSettingsRepository interface {
 	Save(slotSettings model.SlotSettings) error
+	FindAll() ([]model.SlotSettings, error)
 }
 
 type SlotSettingsRepositoryImpl struct {

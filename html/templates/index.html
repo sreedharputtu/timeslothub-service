@@ -1,27 +1,24 @@
 <html>
+
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=2.0">
     <script src="https://unpkg.com/htmx.org@1.9.9"
         integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX"
         crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+        <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 </head>
+
 <body>
     <header class="container">
-                <nav>
-                    <ul>
-                        <li><strong>TimeslotHub</strong></li>
-                    </ul>
-                    <ul>
-                        <li><a hx-get="/views/calendars/settings" hx-target="#main_div">calendar
-                                settings</a></li>
-                        <li><a hx-get="/views/slots/settings" hx-target="#main_div">slot
-                                settings</a>
-                        </li>
-                        <li><a hx-get="/views/slots/bookings" hx-target="#main_div">bookings</a>
-                        </li>
-                    </ul>
-                </nav>
+        <nav>
+               <a hx-get="/views/calendars/settings" hx-target="#main_div">calendar
+                        settings</a></li>
+                <a hx-get="/views/slots/settings" hx-target="#main_div">slot
+                        settings</a>
+                
+               <a hx-get="/views/slots/bookings" hx-target="#main_div">bookings</a>
+        </nav>
     </header>
     <main class="container">
         <div class="grid">
@@ -34,4 +31,5 @@
         footer
     </footer>
 </body>
+
 </html>

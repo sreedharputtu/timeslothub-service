@@ -9,7 +9,7 @@
                      {{$v.WeekDay}} 
                 </td>
                 {{range $i, $value := $v.Days}}
-                <td hx-get="" hx-target="#timeslots_list">
+                <td hx-get="/views/timeslots" hx-target="#timeslots_list">
                     {{$value}}
                 </td>
                 {{end}}
@@ -21,8 +21,6 @@
 <div class="pure-u-1-3">
     <p> select time slot </p>
     <div id="timeslots_list">
-        
-
     </div>
 </div>
 </div>

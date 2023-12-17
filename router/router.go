@@ -37,5 +37,7 @@ func NewRouter(rh *handler.RequestHandler) *gin.Engine {
 
 	r.GET("/views/slots/bookings", rh.BookingsCalendar)
 
+	r.GET("/views/timeslots", rh.TimeSlots)
+
 	return r
 }

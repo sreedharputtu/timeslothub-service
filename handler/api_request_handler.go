@@ -116,6 +116,10 @@ func (r *RequestHandler) GetCalenderSettings(c *gin.Context) {
 
 }
 
+func (r *RequestHandler) TimeSlots(c *gin.Context) {
+	c.HTML(201, "timeslots.html", gin.H{})
+}
+
 type BookingsDays struct {
 	WeekDay string
 	Days    []int

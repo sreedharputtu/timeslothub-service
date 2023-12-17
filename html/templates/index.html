@@ -1,34 +1,126 @@
-<html>
+<html data-theme="light">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=2.0">
+    <meta id="myViewport" name="viewport" content="width = 100">
     <script src="https://unpkg.com/htmx.org@1.9.9"
         integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX"
         crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
+        integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        header {
+            color: black;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .menu {
+            font-weight: bold;
+        }
+
+        .main_continer {
+            margin-left: 100px;
+            padding: 10px;
+            height: 100%;
+        }
+
+        ul {
+            list-style-type: none;
+        }
+
+        .button-success {
+            color: white;
+            border-radius: 4px;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-success {
+            background: blue;
+            font-weight: bolder;
+            /* this is a green */
+        }
+
+        .success_alert {
+            color: green;
+        }
+
+        .menu-item-text {
+            color: blue;
+        }
+
+        footer {
+            bottom: 0;
+            width: 100%;
+            padding: 20px;
+            text-align: center;
+        }
+
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        td {
+            width: 40px;
+            height: 40px;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            padding: 15px;
+            text-align: center;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 14px 20px;
+            display: inline-block;
+        }
+
+        nav a:hover {
+            background-color: lightslategray
+        }
+    </style>
 </head>
 
 <body>
-    <header class="container">
-        <nav>
-               <a hx-get="/views/calendars/settings" hx-target="#main_div">calendar
-                        settings</a></li>
-                <a hx-get="/views/slots/settings" hx-target="#main_div">slot
-                        settings</a>
-                
-               <a hx-get="/views/slots/bookings" hx-target="#main_div">bookings</a>
-        </nav>
+    <header>
+        timeslothub.com
     </header>
-    <main class="container">
-        <div class="grid">
-
-            <div id="main_div">
+    <nav>
+                <a hx-get="/views/calendars/settings" hx-target="#main_div" class="pure-menu-link">calendars</a>
+                <a hx-get="/views/slots/settings" hx-target="#main_div" class="pure-menu-link">
+                    slot
+                    settings</a>
+                <a hx-get="/views/slots/bookings" hx-target="#main_div" class="pure-menu-link">
+                    bookings</a>
+    </nav>
+    <div class="container" style="height: 80%;">
+        <div class="pure-g">
+            
+            <div id="main_div" class="pure-u-2-3 main_continer">
             </div>
         </div>
-    </main>
-    <footer class="container">
-        footer
+    </div>
+    <footer class="container ">
+        &copy; timeslothub.com
     </footer>
 </body>
 

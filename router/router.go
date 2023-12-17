@@ -35,9 +35,7 @@ func NewRouter(rh *handler.RequestHandler) *gin.Engine {
 		ctx.HTML(201, "slot_settings.html", gin.H{})
 	})
 
-	r.GET("/views/slots/bookings", func(ctx *gin.Context) {
-		ctx.HTML(201, "bookings.html", gin.H{})
-	})
+	r.GET("/views/slots/bookings", rh.BookingsCalendar)
 
 	return r
 }

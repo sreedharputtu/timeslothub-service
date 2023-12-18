@@ -33,15 +33,20 @@
         ul {
             list-style-type: none;
         }
-
+        .pure-button,
         .button-success {
-            color: white;
             border-radius: 4px;
             text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
         }
 
+        .calendar_button {
+            border-radius: 60px;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        }
+
         .button-success {
-            background: blue;
+            color: white;
+            background: green;
             font-weight: bolder;
             /* this is a green */
         }
@@ -97,6 +102,10 @@
         nav a:hover {
             background-color: lightslategray
         }
+
+        .booked_row {
+            background-color: lightcoral;
+        }
     </style>
 </head>
 
@@ -113,11 +122,8 @@
                     bookings</a>
     </nav>
     <div class="container" style="height: 80%;">
-        <div class="pure-g">
-            
-            <div id="main_div" class="pure-u-2-3 main_continer">
+            <div id="main_div" class="pure-g main_continer">
             </div>
-        </div>
     </div>
     <footer class="container ">
         &copy; timeslothub.com

@@ -116,8 +116,40 @@ func (r *RequestHandler) GetCalenderSettings(c *gin.Context) {
 
 }
 
+type Timeslot struct {
+	StartTime int16
+	EndTime   int16
+	IsBooked  bool
+}
+
 func (r *RequestHandler) TimeSlots(c *gin.Context) {
-	c.HTML(201, "timeslots.html", gin.H{})
+	timeslots := make([]Timeslot, 3)
+
+	timeslot1 := Timeslot{
+		0000,
+		1200,
+		false,
+	}
+
+	timeslot2 := Timeslot{
+		1200,
+		1400,
+		true,
+	}
+
+	timeslot3 := Timeslot{
+		1400,
+		1600,
+		false,
+	}
+
+	timeslots[0] = timeslot1
+	timeslots[1] = timeslot2
+	timeslots[2] = timeslot3
+
+	c.HTML(201, "timeslots.html", gin.H{
+		"Timeslots": timeslots,
+	})
 }
 
 type BookingsDays struct {

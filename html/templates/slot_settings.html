@@ -1,11 +1,11 @@
 <div id="slot_settings_alert">
 </div>
 <div id="slot_settings">
-    <form class="pure-form pure-form-aligned" hx-post="/api/v1/slots/settings" hx-target="#slot_settings_alert">
+    <form  hx-post="/api/v1/slots/settings" hx-target="#slot_settings_alert">
         <fieldset>
             <div class="pure-control-group">
-                <label for="day_of_week">day of week</label>
-                <select id="day_of_week" class="pure-input-1-2" name="day_of_week">
+                <label for="day_of_week" class="form-label" >day of week</label>
+                <select id="day_of_week" class="form-select" name="day_of_week">
                     <option>Monday</option>
                     <option>Tuseday</option>
                     <option>Wednesday</option>
@@ -15,18 +15,18 @@
                     <option>Sunday</option>
                 </select>
             </div>
-            <div class="pure-control-group">
-                <label for="start_time">start time</label>
-                <input type="text" name="start_time" id="start_time">
+            <div>
+                <label for="start_time" class="form-label" >start time</label>
+                <input type="text" name="start_time" id="start_time" class="form-control">
                 <span class="pure-form-message-inline">hh:mm</span>
             </div>
-            <div class="pure-control-group">
-                <label for="end_time">end time</label>
-                <input type="text" name="end_time" id="end_time">
-                <span class="pure-form-message-inline">hh:mm</span>
+            <div>
+                <label for="end_time" class="form-label" >end time</label>
+                <input type="text" name="end_time" id="end_time" class="form-control">
+                <span >hh:mm</span>
             </div>
-            <div class="pure-controls">
-            <button type="submit" class="button-success pure-button"> add </button>
+            <div>
+            <button type="submit" class="btn btn-success"> add </button>
             </div>
         </fieldset>
     </form>

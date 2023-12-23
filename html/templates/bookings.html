@@ -1,6 +1,6 @@
 <div>
-    <h3> select date: </h3>
-    <table>
+    <p> select date: </p>
+    <table class="table">
         <tbody>
             {{range $i , $v := .Calendar  }}
             <tr>
@@ -9,7 +9,7 @@
                 </td>
                 {{range $i, $value := $v.Days}}
                 <td hx-get="/views/timeslots" hx-target="#timeslots_list">
-                    <button class="pure-button calendar_button">{{$value}}</button>
+                    <button class="btn">{{$value}}</button>
                 </td>
                 {{end}}
             </tr>

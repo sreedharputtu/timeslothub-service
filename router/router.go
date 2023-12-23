@@ -1,6 +1,8 @@
 package router
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/sreedharputtu/timeslothub-service/handler"
 )
@@ -10,6 +12,7 @@ func NewRouter(rh *handler.RequestHandler) *gin.Engine {
 	r.LoadHTMLGlob("./html/templates/**")
 
 	r.Static("/images", "./html/images")
+	r.StaticFS("/static", http.Dir("./static"))
 
 	rg := r.Group("/api/v1")
 	rg.POST("/users", rh.SaveUser)

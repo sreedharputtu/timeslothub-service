@@ -1,133 +1,59 @@
-<html data-theme="light">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta id="myViewport" name="viewport" content="width = 100">
-    <script src="https://unpkg.com/htmx.org@1.9.9"
-        integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX"
-        crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
-        integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
-    <style>
-        html,
-        body {
-            height: 100%;
-        }
+  <meta charset="UTF-8">
+  <meta id="myViewport" name="viewport" content="width = 100">
+  <script src="https://unpkg.com/htmx.org@1.9.9"
+    integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX"
+    crossorigin="anonymous"></script>
+  <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css" />
+  <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+  <style>
+    html,
+    body {
+      height: 100%;
+    }
 
-        header {
-            color: black;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .menu {
-            font-weight: bold;
-        }
-
-        .main_continer {
-            margin-left: 100px;
-            padding: 10px;
-            height: 100%;
-        }
-
-        ul {
-            list-style-type: none;
-        }
-        .pure-button,
-        .button-success {
-            border-radius: 4px;
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-        }
-
-        .calendar_button {
-            border-radius: 60px;
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-        }
-
-        .button-success {
-            color: white;
-            background: green;
-            font-weight: bolder;
-            /* this is a green */
-        }
-
-        .success_alert {
-            color: green;
-        }
-
-        .menu-item-text {
-            color: blue;
-        }
-
-        footer {
-            bottom: 0;
-            width: 100%;
-            padding: 20px;
-            text-align: center;
-        }
-
-
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        td {
-            width: 40px;
-            height: 40px;
-        }
-
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        header {
-            padding: 15px;
-            text-align: center;
-        }
-
-        nav {
-            display: flex;
-            justify-content: center;
-        }
-
-        nav a {
-            color: #fff;
-            text-decoration: none;
-            padding: 14px 20px;
-            display: inline-block;
-        }
-
-        nav a:hover {
-            background-color: lightslategray
-        }
-
-        .booked_row {
-            background-color: lightcoral;
-        }
-    </style>
+    header {
+      padding: 10px;
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body>
-    <header>
-        timeslothub.com
-    </header>
-    <nav>
-                <a hx-get="/views/calendars/settings" hx-target="#main_div" class="pure-menu-link">calendars</a>
-                <a hx-get="/views/slots/settings" hx-target="#main_div" class="pure-menu-link">
-                    slot
-                    settings</a>
-                <a hx-get="/views/slots/bookings" hx-target="#main_div" class="pure-menu-link">
-                    bookings</a>
-    </nav>
-    <div class="container" style="height: 80%;">
-            <div id="main_div" class="pure-g main_continer">
+  <header class="header">
+   <img src="/images/title.png" alt="timeslothub.com" style="max-width: 150px;"/>
+  </header>
+  <div class="container-fluid" style="height: 80%;">
+    <div class="row">
+      <div class="col-md-2">
+        <nav class="nav flex-column">
+          <div>
+            <p> calendar </p>
+                <div style="margin-left:10px">
+                  <a class="nav-link" hx-get="/views/calendars/settings" hx-target="#main_div">create calendar </a>  
+                </div>
+                <div style="margin-left:10px">
+                  <a class="nav-link" hx-get="/views/calendars/settings" hx-target="#main_div">view calendars</a>  
+                </div>
+          </div>
+          <div>
+            <p> bookings </p>
+            <div style="margin-left:10px">
+            <a class="nav-link" hx-get="/views/slots/bookings" hx-target="#main_div">
+              view bookings</a>
             </div>
+            </div>
+          
+        </nav>
+      </div>
+      <div class="col-md-6" style="padding:20px;margin-left: 10px;">
+        <div id="main_div" class="pure-g main_continer">
+        </div>
+      </div>
     </div>
-    <footer class="container ">
-        &copy; timeslothub.com
-    </footer>
+  </div>
 </body>
 
 </html>

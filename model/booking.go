@@ -1,1 +1,16 @@
 package model
+
+import "time"
+
+type Booking struct {
+	ID          int64     `gorm:"type:int;primary_key"`
+	UserID      int64     `gorm:"type:int"`
+	CalendarID  int64     `gorm:"type:int"`
+	Status      string    `gorm:"type:char(100)"`
+	BookingDate time.Time `gorm:"type:timestamp"`
+	StartTime   int       `gorm:"type:int"`
+	EndTime     int       `gorm:"type:int"`
+	CreatedBy   int64     `gorm:"type:int"`
+	CreatedAt   time.Time `gorm:"type:timestamp"`
+	UpdatedAt   time.Time `gorm:"type:timestamp"`
+}

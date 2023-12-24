@@ -18,13 +18,14 @@ const (
 	timeformat = "^[0-2][0-3]:[0-5][0-9]+$"
 )
 
-func NewRequestHandler(userRepository repository.UsersRepository, ssr repository.SlotSettingsRepository) *RequestHandler {
-	return &RequestHandler{userRespository: userRepository, slotSettingsRepository: ssr}
+func NewRequestHandler(userRepository repository.UsersRepository, ssr repository.SlotSettingsRepository, cri repository.CalendarSettingsRepository) *RequestHandler {
+	return &RequestHandler{userRespository: userRepository, slotSettingsRepository: ssr, calendarRepo: cri}
 }
 
 type RequestHandler struct {
 	userRespository        repository.UsersRepository
 	slotSettingsRepository repository.SlotSettingsRepository
+	calendarRepo           repository.CalendarSettingsRepository
 }
 
 func Health(c *gin.Context) {
@@ -47,12 +48,43 @@ func (r *RequestHandler) SaveUser(c *gin.Context) {
 
 func (r *RequestHandler) SaveCalendarSettings(c *gin.Context) {
 
+	slotTime, err := strconv.Atoi(c.Request.FormValue("slot_time"))
+	if err != nil {
+		log.Error(err)
+		c.Status(400)
+		return
+	}
+
+	autoAccept := false
+	autoAcceptStr := c.Request.FormValue("auto_accept")
+	if autoAcceptStr == "on" {
+		autoAccept = true
+	}
+
+	calendar := model.CalendarSettings{
+		CalendarName: c.Request.FormValue("calendar_name"),
+		SlotTime:     int32(slotTime),
+		AutoAccept:   autoAccept,
+		UserID:       1,
+		CreatedAt:    time.Now(),
+	}
+
+	calendarID, err := r.calendarRepo.Save(calendar)
+	log.Debug(fmt.Sprintf("created calendar id:%d", calendarID))
+	c.HTML(201, "add_slot_settings.html", gin.H{
+		"calendar_name": calendar.CalendarName,
+		"calendar_id":   calendarID,
+	})
 }
 
 func (r *RequestHandler) SaveSlotSettings(c *gin.Context) {
 	dayOfWeek := c.Request.FormValue("day_of_week")
 	startTime := c.Request.FormValue("start_time")
 	endTime := c.Request.FormValue("end_time")
+	calendarIDStr := c.Request.FormValue("calendar_id")
+	log.Debug(fmt.Sprintf("slot is creating for  calendar id:%s", calendarIDStr))
+
+	calendarID, _ := strconv.ParseInt(calendarIDStr, 10, 64)
 
 	match, err := regexp.MatchString(timeformat, startTime)
 	if err != nil || !match {
@@ -80,10 +112,11 @@ func (r *RequestHandler) SaveSlotSettings(c *gin.Context) {
 	log.Debug("day_of_week:", dayOfWeek)
 
 	slotSettings := model.SlotSettings{
-		DayOfWeek: dayOfWeek,
-		StartTime: start,
-		EndTime:   end,
-		UserID:    int64(1),
+		DayOfWeek:  dayOfWeek,
+		StartTime:  start,
+		EndTime:    end,
+		UserID:     int64(1),
+		CalendarID: calendarID,
 	}
 	err = r.slotSettingsRepository.Save(slotSettings)
 	if err != nil {
@@ -91,14 +124,16 @@ func (r *RequestHandler) SaveSlotSettings(c *gin.Context) {
 		return
 	}
 
-	c.HTML(201, "success_alert.html", gin.H{"msg": "slot added successfully"})
+	//c.HTML(201, "success_alert.html", gin.H{"msg": "slot added successfully"})
 
-	//sslist, _ := r.slotSettingsRepository.FindAll()
-	//ssdtolist := convertSlotSettings(sslist)
+	sslist, _ := r.slotSettingsRepository.FindAll()
+	ssdtolist := convertSlotSettings(sslist)
 
-	// c.HTML(201, "slot_settings_table.html", gin.H{
-	// 	"SlotSettingsList": ssdtolist,
-	// })
+	c.HTML(201, "slot_settings_table.html", gin.H{
+		"SlotSettingsList": ssdtolist,
+		"SlotAddStatus":    true,
+		"Msg":              "slot added successfully",
+	})
 }
 
 func (r *RequestHandler) BookingsCalendar(c *gin.Context) {

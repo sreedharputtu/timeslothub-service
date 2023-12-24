@@ -1,0 +1,21 @@
+<div id="calendar_settings">
+    <form  hx-post="/api/v1/calendars/settings" hx-swap="innerHTML">
+        <fieldset>
+            <div>
+                <label for="calendar_name">calendar name</label>
+                <input type="text" class="form-control" id="calendar_name" name="calendar_name">
+            </div>
+            <div>
+        <label for="slot_time" class="form-label">slot time (in mins)</label>
+        <input type="text" name="slot_time" id="slot_time" class="form-control">
+        <span class="pure-form-message">used when user creates booking on your calendar </span>
+    </div>
+    <div>
+        <label for="auto_accept" class="pure-checkbox" class="form-label">
+            <input type="checkbox" name="auto_accept" id="auto_accept"> auto accept
+        </label>
+    </div>
+        <button type="submit" class="btn btn-success">Next</button>
+        </fieldset>
+    </form>
+</div>

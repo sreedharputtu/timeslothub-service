@@ -1,24 +1,3 @@
-<div id="calendar_settings">
-    <form class="pure-form pure-form-stacked">
-        <fieldset>
-            <div>
-                <label for="calendar_name">calendar name</label>
-                <input type="text" class="form-control" id="calendar_name" name="calendar_name">
-            </div>
-            <div>
-        <label for="max_booking_time" class="form-label">slot time (in mins)</label>
-        <input type="text" name="max_booking_time" id="max_booking_time" class="form-control">
-        <span class="pure-form-message">used when user creates booking on your calendar </span>
-    </div>
-    <div>
-        <label for="auto_accept" class="pure-checkbox" class="form-label">
-            <input type="checkbox" name="auto_accept" id="auto_accept"> auto accept
-        </label>
-    </div>
-        <button type="submit" class="btn btn-success">submit</button>
-        </fieldset>
-    </form>
-</div>
 <div id="slot_settings_alert">
 </div>
 <div id="slot_settings">
@@ -47,8 +26,14 @@
                 <span >hh:mm</span>
             </div>
             <div>
+                <input type="text" name="calendar_id" id="calendar_id" class="form-control" value="{{.calendar_id}}">
+            </div>
+
+            <div>
             <button type="submit" class="btn btn-success"> add </button>
             </div>
         </fieldset>
     </form>
+</div>
+<div id="slot_settings_table">
 </div>

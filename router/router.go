@@ -17,7 +17,7 @@ func NewRouter(rh *handler.RequestHandler) *gin.Engine {
 	rg := r.Group("/api/v1")
 	rg.POST("/users", rh.SaveUser)
 	rg.PUT("/users/:user_id")
-	rg.POST("/calendars/settings/:user_id", rh.SaveCalendarSettings)
+	rg.POST("/calendars/settings", rh.SaveCalendarSettings)
 	rg.PUT("/calendars/settings/:user_id", rh.UpdateCalenderSettings)
 	rg.GET("/calendars/settings/:user_id", rh.GetCalenderSettings)
 	rg.POST("/slots/settings", rh.SaveSlotSettings)
@@ -31,7 +31,7 @@ func NewRouter(rh *handler.RequestHandler) *gin.Engine {
 	///views/calendars/settings
 
 	r.GET("/views/calendars/settings", func(ctx *gin.Context) {
-		ctx.HTML(201, "calendar_settings.html", gin.H{})
+		ctx.HTML(201, "create_calendar.html", gin.H{})
 	})
 
 	r.GET("/views/slots/settings", func(ctx *gin.Context) {

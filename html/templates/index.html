@@ -8,45 +8,54 @@
     crossorigin="anonymous"></script>
   <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css" />
   <script src="/static/bootstrap/js/bootstrap.min.js"></script>
-  <style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kalnia:wght@600&family=Nunito:wght@200&family=Open+Sans:wght@300&family=Playfair+Display:wght@700&display=swap"
+    rel="stylesheet">
+      <style>
     html,
     body {
       height: 100%;
+    }
+
+    .title {
+      font-family: 'Kalnia', serif;
+      font-family: 'Nunito', sans-serif;
+      font-family: 'Open Sans', sans-serif;
+      font-family: 'Playfair Display', serif;
     }
 
     header {
       padding: 10px;
       text-align: center;
     }
+
+    .bg-light-gray {
+      background-color: lightgray;
+    }
   </style>
 </head>
 
 <body>
   <header class="header">
-   <img src="/images/title.png" alt="timeslothub.com" style="max-width: 150px;"/>
+    <h3 class="title">timeslothub.com</h3>
   </header>
   <div class="container-fluid" style="height: 80%;">
     <div class="row">
-      <div class="col-md-2">
-        <nav class="nav flex-column">
-          <div>
-            <p> calendar </p>
-                <div style="margin-left:10px">
-                  <a class="nav-link" hx-get="/views/calendars/settings" hx-target="#main_div">create calendar </a>  
-                </div>
-                <div style="margin-left:10px">
-                  <a class="nav-link" hx-get="/views/calendars/settings" hx-target="#main_div">view calendars</a>  
-                </div>
-          </div>
-          <div>
-            <p> bookings </p>
-            <div style="margin-left:10px">
-            <a class="nav-link" hx-get="/views/slots/bookings" hx-target="#main_div">
-              view bookings</a>
-            </div>
-            </div>
-          
-        </nav>
+      <div class="col-md-2 list-group list-group-flush">
+        <a class="list-group-item list-group-item-action   text-center text-primary" hx-get="/api/v1/calendars/settings"
+        hx-target="#main_div">
+        view calendars
+      </a>
+        <a class="list-group-item list-group-item-action    text-center text-primary" hx-get="/views/calendars/settings"
+          hx-target="#main_div">
+          create calendar
+        </a>
+        <a class=" list-group-item list-group-item-action   text-center text-primary" hx-get="/views/slots/bookings"
+          hx-target="#main_div">
+          view bookings
+        </a>
       </div>
       <div class="col-md-6" style="padding:20px;margin-left: 10px;">
         <div id="main_div" class="pure-g main_continer">

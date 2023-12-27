@@ -32,7 +32,7 @@ func (ssr *SlotSettingsRepositoryImpl) FindAll() ([]model.SlotSettings, error) {
 
 func (ssr *SlotSettingsRepositoryImpl) FindByCalendarID(calendarID int64) ([]model.SlotSettings, error) {
 	var slotSettingsList []model.SlotSettings
-	err := ssr.Db.Raw("select id , day_of_week_id , day_of_week , start_time , end_time , user_id , calendar_id, created_at , updated_at from slot_settings where calendar_id = ?").Scan(slotSettingsList).Error
+	err := ssr.Db.Where("calendar_id=?", calendarID).Find(&slotSettingsList).Error
 	if err != nil {
 		return slotSettingsList, err
 	}

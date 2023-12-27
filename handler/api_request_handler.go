@@ -138,7 +138,6 @@ func (r *RequestHandler) SaveSlotSettings(c *gin.Context) {
 
 func (r *RequestHandler) BookingsCalendar(c *gin.Context) {
 	calendar := cal(0)
-	fmt.Println(calendar)
 	weekdayOrder := []string{"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"}
 	c.HTML(201, "bookings.html", gin.H{"Calendar": calendar, "Order": weekdayOrder})
 }
@@ -148,6 +147,31 @@ func (r *RequestHandler) UpdateCalenderSettings(c *gin.Context) {
 }
 
 func (r *RequestHandler) GetCalenderSettings(c *gin.Context) {
+	calendars, err := r.calendarRepo.FindByUserID(1)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	c.HTML(200, "view_calendars.html", gin.H{
+		"Calendars": calendars,
+	})
+}
+
+func (r *RequestHandler) GetSlotSettingsByCalendarID(c *gin.Context) {
+	calendarID, err := strconv.ParseInt(c.Param("calendar_id"), 10, 64)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+	slots, err := r.slotSettingsRepository.FindByCalendarID(calendarID)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	c.HTML(201, "slot_settings_table.html", gin.H{
+		"SlotSettingsList": slots,
+	})
 
 }
 

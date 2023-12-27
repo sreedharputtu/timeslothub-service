@@ -1,0 +1,13 @@
+<div id="calendars_view">
+    <table class="table">
+        {{ range $i , $e := .Calendars}}
+                
+                    <tr>
+                        <td> {{ $e.ID }}</td>
+                        <td> <span class="badge bg-success">{{ $e.CalendarName }}</span></td>
+                        <td><a hx-get="/api/v1/calendars/{{$e.ID}}/slots" hx-target="#calendars_view" class="link">slot settings</a></td>
+                    </tr>
+                
+        {{end}}
+    </table>
+</div>

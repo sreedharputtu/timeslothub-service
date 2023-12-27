@@ -22,7 +22,7 @@ func NewCalendarRepoImpl(DB *gorm.DB) CalendarSettingsRepository {
 // FindByUserID implements CalendarSettingsRepository.
 func (cri *CalendarSettingsRepositoryImpl) FindByUserID(userID int64) ([]model.CalendarSettings, error) {
 	var calendars []model.CalendarSettings
-	result := cri.DB.Where("user_id=?", userID).Find(calendars)
+	result := cri.DB.Where("user_id=?", userID).Find(&calendars)
 	if result.Error != nil {
 		return calendars, result.Error
 	}

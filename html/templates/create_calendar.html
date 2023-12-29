@@ -1,5 +1,11 @@
+
 <div id="calendar_settings">
-    <form  hx-post="/api/v1/calendars/settings" hx-swap="innerHTML">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">create calendar</li>
+        </ol>
+      </nav>
+    <form  hx-post="/api/v1/calendars/settings" hx-target="#calendar_settings">
         <fieldset>
             <div>
                 <label for="calendar_name">calendar name</label>

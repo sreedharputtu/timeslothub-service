@@ -1,27 +1,27 @@
+<legend>select time</legend>
 <div>
-    <p>select time slot:</p>
     <table class="table">
         <thead>
-            <tr>
-                <td>
-                    Satrt
+            <tr style="border-bottom: solid 1px;">
+                <td style="padding-left:10px;">
+                    start-time
                 </td>
-                <td>
-                    End
+                <td style="padding-left:10px;">
+                    end-time
                 </td>
-                <td>
-                    Status
+                <td style="padding-left:10px;">
+                    status
                 </td>
             </tr>
         </thead>
     {{ range $i , $e := .Timeslots}}
-    <tr {{if $e.IsBooked }} class="booked_row" {{end}}>
-        <td>{{$e.StartTime}}</td>
-        <td>{{$e.EndTime}}</td>
-        <td>{{if $e.IsBooked }}
-            <span>Booked</span>
+    <tr {{if $e.IsBooked }} class="booked_row" {{end}} style="border-bottom: solid 1px;" >
+        <td style="padding-left:10px;">{{$e.StartTime}}</td>
+        <td style="padding-left:10px;">{{$e.EndTime}}</td>
+        <td style="padding-left:10px;">{{if $e.IsBooked }}
+            <span>booked</span>
             {{else}}
-            <button class="btn btn-success">Book</button>
+            <button class="btn btn-success">book</button>
             {{end}}
         </td>
     </tr>

@@ -1,13 +1,5 @@
-{{if .SlotAddStatus}}
-<div class="alert alert-success">
-    <p><strong> {{.Msg}} </strong></p>
-</div>
-{{else}}
-<div class="alert alert-error">
-    <p><strong> {{.Msg}} </strong></p>
-</div>
-{{end}}
 <div>
+    <legend>time slot settings</legend>
     <table class="table">
         <thead>
         <tr>
@@ -25,7 +17,7 @@
                 <td>{{.DayOfWeek}}</td>
                 <td>{{.StartTime}}</td>
                 <td>{{.EndTime}}</td>
-                <td><button class="btn btn-danger"> x </button></td>
+                <td><button class="btn">  <img src="/images/remove.svg" width="20px"> </button></td>
             </tr>
         {{end}}
     </tbody>

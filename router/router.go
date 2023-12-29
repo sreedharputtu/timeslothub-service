@@ -10,9 +10,11 @@ import (
 func NewRouter(rh *handler.RequestHandler) *gin.Engine {
 	r := gin.Default()
 	r.LoadHTMLGlob("./html/templates/**")
-
 	r.Static("/images", "./html/images")
 	r.StaticFS("/static", http.Dir("./static"))
+
+	r.GET("/pages/calendars/list", rh.GetCalenderSettings)
+	r.GET("/pages/bookings", rh.BookingsCalendar)
 
 	rg := r.Group("/api/v1")
 	rg.POST("/users", rh.SaveUser)
@@ -31,7 +33,7 @@ func NewRouter(rh *handler.RequestHandler) *gin.Engine {
 
 	///views/calendars/settings
 
-	r.GET("/views/calendars/settings", func(ctx *gin.Context) {
+	r.GET("/pages/calendars/create", func(ctx *gin.Context) {
 		ctx.HTML(201, "create_calendar.html", gin.H{})
 	})
 

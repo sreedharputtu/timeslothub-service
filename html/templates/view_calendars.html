@@ -1,11 +1,11 @@
 <div id="calendars_view">
-    <table class="table">
+    <legend> active calendars</legend>
+    <table class="table table-hover">
         {{ range $i , $e := .Calendars}}
                 
-                    <tr>
+                    <tr hx-get="/api/v1/calendars/{{$e.ID}}/slots" hx-target="#calendars_view">
                         <td> {{ $e.ID }}</td>
-                        <td> <span class="badge bg-success">{{ $e.CalendarName }}</span></td>
-                        <td><a hx-get="/api/v1/calendars/{{$e.ID}}/slots" hx-target="#calendars_view" class="link">slot settings</a></td>
+                        <td> <h6>{{ $e.CalendarName }}</h6></td>
                     </tr>
                 
         {{end}}

@@ -2,61 +2,166 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta id="myViewport" name="viewport" content="width = 100">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://unpkg.com/htmx.org@1.9.9"
     integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX"
     crossorigin="anonymous"></script>
   <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css" />
   <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Kalnia:wght@600&family=Nunito:wght@200&family=Open+Sans:wght@300&family=Playfair+Display:wght@700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Kalnia:wght@600&family=Nunito:wght@500&family=Open+Sans:wght@300&family=Playfair+Display:wght@700&display=swap"
     rel="stylesheet">
       <style>
     html,
     body {
       height: 100%;
+      font-family: 'Nunito', sans-serif;
     }
 
     .title {
-      font-family: 'Kalnia', serif;
       font-family: 'Nunito', sans-serif;
       font-family: 'Open Sans', sans-serif;
       font-family: 'Playfair Display', serif;
+      padding-top: 10px;
     }
 
     header {
-      padding: 10px;
+      padding: 20px;
+    }
+
+    footer {
+      padding: 15px;
       text-align: center;
+      background-color: gray;
     }
 
     .bg-light-gray {
       background-color: lightgray;
     }
+
+    .dropbtn {
+  border: none;
+  cursor: pointer;
+}
+
+.cursor-ptr {
+  cursor: pointer;
+}
+
+/* Dropdown button on hover & focus */
+.dropbtn:hover, .dropbtn:focus {
+  background-color: lightgray;
+}
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+/* Change color of dropdown links on hover */
+.dropdown-content a:hover {background-color: #ddd;}
+
+/* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+.show {display:block;}
+
   </style>
+  <script>
+    /* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function myFunction() {
+  document.getElementById("myDropdown").classList.toggle("show");
+}
+
+// Close the dropdown menu if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+  </script>
 </head>
 
-<body>
+<body class="container-md">
   <header class="header">
-    <h3 class="title">timeslothub.com</h3>
-  </header>
-  <div class="container-fluid" style="height: 80%;">
     <div class="row">
-      <div class="col-md-2 list-group list-group-flush">
-        <a class="list-group-item list-group-item-action   text-center text-primary" hx-get="/api/v1/calendars/settings"
-        hx-target="#main_div">
-        view calendars
-      </a>
-        <a class="list-group-item list-group-item-action    text-center text-primary" hx-get="/views/calendars/settings"
-          hx-target="#main_div">
-          create calendar
-        </a>
-        <a class=" list-group-item list-group-item-action   text-center text-primary" hx-get="/views/slots/bookings"
-          hx-target="#main_div">
-          view bookings
-        </a>
+      <div class="col">
+            <img src="/images/logo.svg" width="210px">
       </div>
+</div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Dashboard</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            calendars
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" hx-get="/pages/calendars/list"
+              hx-target="#main_div">list</a></li>
+            <li><a class="dropdown-item" hx-get="/pages/calendars/create"
+              hx-target="#main_div">create</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            bookings
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown1">
+            <li><a class="dropdown-item" href="#">list</a></li>
+            <li><a class="dropdown-item" hx-get="/pages/bookings"
+              hx-target="#main_div">create</a></li>
+          </ul>
+        </li>
+      </ul>
+      <div class="dropdown">
+        <button onclick="myFunction()" class="dropbtn btn btn-large"><img src="/images/person.svg" width="30px;" alt=""> username <img src="/images/dropdown.svg" width="15px;" alt=""></button>
+        <div id="myDropdown" class="dropdown-content">
+          <a href="#">profile</a>
+          <a href="#">logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>  
+  </header>
+  <div class="container-fluid" style="height: 86%;margin-top:10px;">
+    <div class="row">
       <div class="col-md-6" style="padding:20px;margin-left: 10px;">
         <div id="main_div" class="pure-g main_continer">
         </div>
@@ -64,5 +169,4 @@
     </div>
   </div>
 </body>
-
 </html>

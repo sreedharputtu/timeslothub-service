@@ -1,21 +1,23 @@
-<div>
-    <p> select date: </p>
-    <table class="table">
-        <tbody>
-            {{range $i , $v := .Calendar  }}
-            <tr>
-                <td>
-                     {{$v.WeekDay}} 
-                </td>
-                {{range $i, $value := $v.Days}}
-                <td hx-get="/views/timeslots" hx-target="#timeslots_list">
-                    <button class="btn">{{$value}}</button>
-                </td>
+<div class="row">
+    <div class="col-md-6">
+        <legend>select date</legend>
+        <table>
+            <tbody>
+                {{range $i , $v := .Calendar  }}
+                <tr>
+                    <td>
+                         {{$v.WeekDay}} 
+                    </td>
+                    {{range $i, $value := $v.Days}}
+                    <td hx-get="/views/timeslots" hx-target="#timeslots_list">
+                        <button class="btn">{{$value}}</button>
+                    </td>
+                    {{end}}
+                </tr>
                 {{end}}
-            </tr>
-            {{end}}
-        </tbody>
-    </table>
-</div>
-<div id="timeslots_list">
+            </tbody>
+        </table>
+    </div>
+    <div id="timeslots_list" class="col-md-6">
+    </div>
 </div>

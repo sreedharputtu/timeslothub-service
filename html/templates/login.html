@@ -1,0 +1,46 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/htmx.org@1.9.9"
+        integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css" />
+    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Kalnia:wght@600&family=Nunito:wght@500&family=Open+Sans:wght@300&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+</head>
+<body>
+    <div class="row justify-content-center" style="margin-top:50px;">
+           
+        <div class="col-md-4" style="padding:50px;max-width: 400px;border:solid 1px">
+            <div style="text-align:center;padding:25px;">
+                <img src="/images/logo.svg" width="210px">
+                <p>
+                    simple tool to manage and share your calendar
+                </p>
+            </div>
+            <form class="form" hx-post="/user/login" hx-swap="innerHTML">
+                <fieldset>
+                    <div>
+                        <label for="email">Email</label>
+                        <input type="text" class="form-control" name="email" id="login_email">
+                    </div>
+                    <div>
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" name="password">
+                    </div>
+                    <button class="btn btn-primary" style="margin-top:10px;"> Login </button>
+                    <div style="margin-top:20px;">
+                    <a href="#"> Forgot password </a>
+                    <a href="#" style="margin-left:20px;"> Register </a>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</body>

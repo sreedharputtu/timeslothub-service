@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/labstack/gommon/log"
 	"github.com/sreedharputtu/timeslothub-service/model"
@@ -290,4 +291,82 @@ func cal(month int) []BookingsDays {
 	}
 
 	return calendar
+}
+
+func (rh *RequestHandler) Login(c *gin.Context) {
+	email := c.Request.FormValue("email")
+	password := c.Request.FormValue("password")
+
+	fmt.Println("input values", email, password)
+
+	if email == "" || password == "" {
+		log.Error("email or password empty")
+		c.JSON(401, gin.H{
+			"error": "invalid credentails",
+		})
+		return
+	}
+	user, err := rh.userRespository.FindByEmail(email)
+	if err != nil {
+		log.Error(err)
+		c.JSON(401, gin.H{
+			"error": "could not find user with given email",
+		})
+		return
+	}
+	if email == "sreedharputtu@gmail.com" {
+		user.HashPassword("123456789")
+	}
+
+	if email == "swathiputtu@gmail.com" {
+		user.HashPassword("912345678")
+	}
+
+	err = user.CheckPassword(password)
+	if err != nil {
+		log.Error(err)
+		c.JSON(401, gin.H{
+			"error": "invalid password",
+		})
+		return
+	}
+
+	jwtWrapper := JwtWrapper{
+		SecretKey:         "verysecretkey",
+		Issuer:            "AuthService",
+		ExpirationMinutes: 1,
+		ExpirationHours:   12,
+	}
+
+	signedToken, err := jwtWrapper.GenerateToken(user.Email)
+	if err != nil {
+		log.Error(err)
+		c.JSON(500, gin.H{
+			"Error": "Error Signing Token",
+		})
+		c.Abort()
+		return
+	}
+
+	session := sessions.Default(c)
+	session.Set("state", signedToken)
+
+	err = session.Save()
+	if err != nil {
+		log.Error("error while saving session", err)
+	}
+
+	fmt.Println("user.Email:", user.Email)
+	fmt.Println("state", signedToken)
+
+	// refreshToken, err := jwtWrapper.RefreshToken(user.Email)
+	// if err != nil {
+	// 	c.JSON(500, gin.H{
+	// 		"Error": "Error Signing Token",
+	// 	})
+	// 	c.Abort()
+	// 	return
+	// }
+
+	c.Redirect(301, "/")
 }

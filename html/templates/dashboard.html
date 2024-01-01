@@ -1,0 +1,80 @@
+<div id="dashboard">
+<header class="header">
+    <div class="row" style="text-align:center">
+      <div class="col">
+            <img src="/images/logo.svg" width="210px">
+      </div>
+</div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin-top:10px;">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/">Dashboard</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            calendars
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" hx-get="/pages/calendars/list"
+              hx-target="#main_div">list</a></li>
+            <li><a class="dropdown-item" hx-get="/pages/calendars/create"
+              hx-target="#main_div">create</a></li>
+          </ul>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            bookings
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown1">
+            <li><a class="dropdown-item" href="#">list</a></li>
+            <li><a class="dropdown-item" hx-get="/pages/bookings"
+              hx-target="#main_div">create</a></li>
+          </ul>
+        </li>
+      </ul>
+      <div class="dropdown">
+        <button onclick="myFunction()" class="dropbtn btn btn-large"><img src="/images/person.svg" width="30px;" alt=""> username <img src="/images/dropdown.svg" width="15px;" alt=""></button>
+        <div id="myDropdown" class="dropdown-content">
+          <a href="#">profile</a>
+          <a hx-get="/logout" hx-swap="innerHTML">logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>  
+  </header>
+  <div class="container-fluid" style="height: 86%;margin-top:10px;">
+    <div class="row">
+      <div class="col-md-6" style="padding:20px;margin-left: 10px;">
+        <div id="main_div" class="pure-g main_continer">
+          <div class="row">
+            <div class="col-md-6">
+            <div class="card" style="width: 15rem;">
+              <div class="card-body">
+                <h5 class="card-title">10</h5>
+
+                <h6 class="card-subtitle mb-2 text-muted">total calendars</h6>
+                <a href="#" class="card-link">view</a>
+              </div>
+            </div>
+            </div>
+          <div class="col-md-6">
+            <div class="card" style="width: 15rem;">
+              <div class="card-body">
+                <h5 class="card-title">10</h5>
+                <h6 class="card-subtitle mb-2 text-muted">bookings in last 24 hours</h6>
+                <a href="#" class="card-link">view</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>

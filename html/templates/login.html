@@ -16,7 +16,6 @@
 </head>
 <body>
     <div class="row justify-content-center" style="margin-top:50px;">
-           
         <div class="col-md-4" style="padding:50px;max-width: 400px;border:solid 1px">
             <div style="text-align:center;padding:25px;">
                 <img src="/images/logo.svg" width="210px">
@@ -24,7 +23,7 @@
                     simple tool to manage and share your calendar
                 </p>
             </div>
-            <form class="form" hx-post="/user/login" hx-swap="innerHTML">
+            <form class="form" action="/user/login" method="post">
                 <fieldset>
                     <div>
                         <label for="email">Email</label>

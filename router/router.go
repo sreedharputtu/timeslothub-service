@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -33,10 +34,13 @@ func NewRouter(rh *handler.RequestHandler) *gin.Engine {
 	rg.PUT("/slots/settings/:slot_id", rh.GetCalenderSettings)
 
 	protected := r.Group("")
-	protected.Use(handler.Authz())
+	protected.Use(handler.AuthRequired())
 
 	protected.GET("/", func(ctx *gin.Context) {
-		ctx.HTML(201, "index.html", gin.H{})
+		session := sessions.Default(ctx)
+		email := session.Get("user")
+		fmt.Println("eamil", email)
+		ctx.HTML(201, "index.html", gin.H{"Email": email})
 	})
 
 	///views/calendars/settings
@@ -53,14 +57,15 @@ func NewRouter(rh *handler.RequestHandler) *gin.Engine {
 
 	protected.GET("/views/timeslots", rh.TimeSlots)
 
-	protected.GET("/logout", func(ctx *gin.Context) {
+	protected.GET("/user_logout", func(ctx *gin.Context) {
 		session := sessions.Default(ctx)
-		session.Delete("state")
+		session.Clear()
 		session.Save()
-		ctx.HTML(201, "logout.html", nil)
+		ctx.HTML(200, "logout.html", nil)
 	})
 
 	r.GET("/login", func(ctx *gin.Context) {
+		fmt.Println("inside login")
 		ctx.HTML(201, "login.html", nil)
 	})
 

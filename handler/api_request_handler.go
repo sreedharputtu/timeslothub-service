@@ -297,8 +297,6 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 	email := c.Request.FormValue("email")
 	password := c.Request.FormValue("password")
 
-	fmt.Println("input values", email, password)
-
 	if email == "" || password == "" {
 		log.Error("email or password empty")
 		c.JSON(401, gin.H{
@@ -306,6 +304,7 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 		})
 		return
 	}
+
 	user, err := rh.userRespository.FindByEmail(email)
 	if err != nil {
 		log.Error(err)
@@ -314,6 +313,7 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 		})
 		return
 	}
+
 	if email == "sreedharputtu@gmail.com" {
 		user.HashPassword("123456789")
 	}
@@ -347,18 +347,13 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 		c.Abort()
 		return
 	}
-
 	session := sessions.Default(c)
 	session.Set("state", signedToken)
-
+	session.Set("user", email)
 	err = session.Save()
 	if err != nil {
 		log.Error("error while saving session", err)
 	}
-
-	fmt.Println("user.Email:", user.Email)
-	fmt.Println("state", signedToken)
-
 	// refreshToken, err := jwtWrapper.RefreshToken(user.Email)
 	// if err != nil {
 	// 	c.JSON(500, gin.H{
@@ -367,6 +362,6 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 	// 	c.Abort()
 	// 	return
 	// }
+	c.Redirect(http.StatusFound, "/")
 
-	c.Redirect(301, "/")
 }

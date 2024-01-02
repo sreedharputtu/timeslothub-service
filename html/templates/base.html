@@ -116,7 +116,34 @@ toggle between hiding and showing the dropdown content */
 <body>
 {{if .login}}
 <div id="login_container">
-
+  <div class="row justify-content-center" style="margin-top:50px;">
+           
+    <div class="col-md-4" style="padding:50px;max-width: 400px;border:solid 1px">
+        <div style="text-align:center;padding:25px;">
+            <img src="/images/logo.svg" width="210px">
+            <p>
+                simple tool to manage and share your calendar
+            </p>
+        </div>
+        <form class="form" hx-post="/user/login" hx-swap="innerHTML">
+            <fieldset>
+                <div>
+                    <label for="email">Email</label>
+                    <input type="text" class="form-control" name="email" id="login_email">
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" name="password">
+                </div>
+                <button class="btn btn-primary" style="margin-top:10px;"> Login </button>
+                <div style="margin-top:20px;">
+                <a href="#"> Forgot password </a>
+                <a href="#" style="margin-left:20px;"> Register </a>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
 </div>
 {{ else }}
   <div class="container-md" id="main_container">

@@ -78,7 +78,7 @@ func (j *JwtWrapper) ValidateToken(signedToken string) (claims *JwtClaim, err er
 	return
 }
 
-func Authz() gin.HandlerFunc {
+func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Get the Authorization header from the request
 
@@ -86,10 +86,10 @@ func Authz() gin.HandlerFunc {
 		session := sessions.Default(c)
 		clientToken = session.Get("state")
 
-		fmt.Println("client token:", clientToken)
-
 		if clientToken == nil {
-			c.Redirect(http.StatusMovedPermanently, "/login")
+			fmt.Println("client token is empty")
+			c.Redirect(http.StatusFound, "/login")
+			c.Abort()
 			return
 		}
 
@@ -101,11 +101,14 @@ func Authz() gin.HandlerFunc {
 		// Validate the token
 		claims, err := jwtWrapper.ValidateToken(clientToken.(string))
 		if err != nil {
-			c.Redirect(301, "/login")
+			fmt.Println("client token is invalid")
+			c.Redirect(http.StatusFound, "/login")
+			c.Abort()
 			return
 		}
 		// Set the claims in the context
 		c.Set("email", claims.Email)
+		fmt.Println("auth successfull")
 		// Continue to the next handler
 		c.Next()
 	}

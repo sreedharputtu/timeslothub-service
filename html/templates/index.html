@@ -14,6 +14,8 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Kalnia:wght@600&family=Nunito:wght@500&family=Open+Sans:wght@300&family=Playfair+Display:wght@700&display=swap"
     rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
   <style>
     html,
     body {
@@ -141,8 +143,8 @@ toggle between hiding and showing the dropdown content */
                   calendars
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <li><a class="dropdown-item" hx-get="/pages/calendars/list" hx-target="#main_div">list</a></li>
-                  <li><a class="dropdown-item" hx-get="/pages/calendars/create" hx-target="#main_div">create</a></li>
+                  <li><a class="dropdown-item" hx-get="/pages/my/calendars/list" hx-target="#main_div">list</a></li>
+                  <li><a class="dropdown-item" hx-get="/pages/my/calendars/create" hx-target="#main_div">create</a></li>
                 </ul>
               </li>
               <li class="nav-item dropdown">
@@ -151,8 +153,9 @@ toggle between hiding and showing the dropdown content */
                   bookings
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdown1">
-                  <li><a class="dropdown-item" href="#">list</a></li>
-                  <li><a class="dropdown-item" hx-get="/pages/bookings" hx-target="#main_div">create</a></li>
+                  <li><a class="dropdown-item" href="#">received</a></li>
+                  <li><a class="dropdown-item" href="#">created by me</a></li>
+                  <li><a class="dropdown-item" hx-get="/pages/bookings" hx-target="#main_div">create new</a></li>
                 </ul>
               </li>
             </ul>
@@ -160,10 +163,10 @@ toggle between hiding and showing the dropdown content */
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button"
                 data-bs-toggle="dropdown" aria-expanded="false">
-                <span><img src="/images/person.svg" width="25px;">{{.Email}},</span>
+                <span><img src="/images/person.svg" width="25px;">{{.Email}}</span>
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdown1">
-                <li><a class="dropdown-item" href="#">list</a></li>
+                <li><a class="dropdown-item" href="#">profile</a></li>
                 <li><a class="dropdown-item" hx-get="/user_logout" hx-target="#main_container">logout</a></li>
               </ul>
               </li>

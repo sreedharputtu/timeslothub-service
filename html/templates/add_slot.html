@@ -5,7 +5,8 @@
     </ol>
   </nav>
 <div id="slot_settings">
-    <form  hx-post="/api/v1/slots/settings" hx-target="#slot_settings_table">
+    <span>create operational time slots for calendar: <h5>{{.calendar_name}}</h5></p>
+    <form  hx-post="/api/v1/slots" hx-target="#slot_settings_table">
         <fieldset>
             <div class="pure-control-group">
                 <label for="day_of_week" class="form-label" >day of week</label>
@@ -30,7 +31,7 @@
                 <span >hh:mm</span>
             </div>
             <div>
-                <input type="text" name="calendar_id" id="calendar_id" class="form-control" value="{{.calendar_id}}">
+                <input type="text" name="calendar_id" id="calendar_id" value="{{.calendar_id}}" class="form-control" style="pointer-events: none;background: grey;">
             </div>
 
             <div>

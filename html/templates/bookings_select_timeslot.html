@@ -1,6 +1,6 @@
-<legend>select time</legend>
 <div>
-    <table class="table">
+    <h6>select time</h6>
+    <table class="table table-striped">
         <thead>
             <tr style="border-bottom: solid 1px;">
                 <td style="padding-left:10px;">
@@ -15,7 +15,7 @@
             </tr>
         </thead>
     {{ range $i , $e := .Timeslots}}
-    <tr {{if $e.IsBooked }} class="booked_row" {{end}} style="border-bottom: solid 1px;" >
+    <tr {{if $e.IsBooked }} class="booked_row" {{end}}>
         <td style="padding-left:10px;">{{$e.StartTime}}</td>
         <td style="padding-left:10px;">{{$e.EndTime}}</td>
         <td style="padding-left:10px;">{{if $e.IsBooked }}

@@ -1,0 +1,76 @@
+<div class="row" x-data="{ open: false , selected_calendar:'', selected_date:'' , show_select_date:false}">
+<div id="calendars_view" class="col-md-6" x-show="!open">
+      <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item active">Calendars</li>
+        </ol>
+      </nav>
+      
+    <table class="table table-hover table-striped">
+        {{ range $i , $e := .Calendars}}
+                    <tr hx-get="/calendars/{{$e.ID}}/bookings" hx-swap="none" @click="open = true , selected_calendar='{{$e.CalendarName}}'">
+                        <td> {{ $e.ID }}</td>
+                        <td> <h6>{{ $e.CalendarName }}</h6></td>
+                    </tr>
+        {{end}}
+    </table>
+</div>
+<div id="select_calendar_date" class="col-md-6" x-show="open">
+    <div>
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item text-primary"> <a @click="open = false , selected_calendar=''"><span>Calendars</span></a> </li>
+              <li class="breadcrumb-item active">Date</li>
+            </ol>
+          </nav>
+        <h6>selected calendar : </h6> 
+        <h4><span x-text="selected_calendar" class="badge bg-info"></span></h4>
+        
+        <div class="row">
+            <h5>select date: </h5>
+            <div class="col">
+                <h5>
+                <span class="badge bg-primary">
+                    {{.CurrentMonth}}
+                </span>
+            </h5>
+            </div>
+            <div class="col">
+                <a href="#">Next</a>
+            </div>
+        </div>
+        <table>
+            <tbody>
+                {{range $i , $v := .CurrentCalendar }}
+                <tr style="height: 25px;">
+                    <td>
+                        {{$v.WeekDay}}
+                    </td>
+                    {{range $i, $value := $v.Days}}
+                    <td hx-get="/views/timeslots" hx-target="#timeslots_list">
+                        <button class="btn btn-light" @click="selected_date = '01-01-2024', show_select_date=true" >{{$value}}</button>
+                    </td>
+                    {{end}}
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </div>
+    </div>
+    <div class="col-md-6">
+        <div x-show="show_select_date">
+        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item text-primary"> <a @click="open = false , selected_calendar=''"><span>Calendars</span></a> </li>
+              <li class="breadcrumb-item text-primary">Date</li>
+              <li class="breadcrumb-item active">Bookings</li>
+            </ol>
+          </nav>
+          <h6>select date : </h6>
+          <span x-text="selected_date"></span>
+        </div>
+          <div id="timeslots_list">
+
+          </div>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+<div class="row justify-content-center">
+    <div class="col">
+        <form class="form" hx-get="/api/v1/calendars" hx-swap="outerHTML">
+            <fieldset>
+                <div class="mb-3">
+                    <label for="" class="form-label">calendar id</label>
+                    <input type="text" name="calendar_id" id="calendar_id" class="form-control"
+                        placeholder="enter calendar id" />
+                </div>
+                or
+                <div class="mb-3">
+                    <label for="" class="form-label">email</label>
+                    <input type="text" name="user_email" id="user_email" class="form-control"
+                        placeholder="enter email" />
+                </div>
+                <button class="btn btn-primary">search</button>
+            </fieldset>
+        </form>
+    </div>
+</div>

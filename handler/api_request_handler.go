@@ -47,7 +47,7 @@ func (r *RequestHandler) SaveUser(c *gin.Context) {
 	c.HTML(201, "bookings.html", nil)
 }
 
-func (r *RequestHandler) SaveCalendarSettings(c *gin.Context) {
+func (r *RequestHandler) SaveMyCalendar(c *gin.Context) {
 
 	slotTime, err := strconv.Atoi(c.Request.FormValue("slot_time"))
 	if err != nil {
@@ -62,23 +62,31 @@ func (r *RequestHandler) SaveCalendarSettings(c *gin.Context) {
 		autoAccept = true
 	}
 
+	session := sessions.Default(c)
+	userIDRaw := session.Get("user_id")
+	if userIDRaw == nil {
+		c.Status(500)
+		return
+	}
+
+	userID := userIDRaw.(int64)
+
 	calendar := model.CalendarSettings{
 		CalendarName: c.Request.FormValue("calendar_name"),
 		SlotTime:     int32(slotTime),
 		AutoAccept:   autoAccept,
-		UserID:       1,
+		UserID:       userID,
 		CreatedAt:    time.Now(),
 	}
 
 	calendarID, err := r.calendarRepo.Save(calendar)
-	log.Debug(fmt.Sprintf("created calendar id:%d", calendarID))
-	c.HTML(201, "add_slot_settings.html", gin.H{
+	c.HTML(201, "add_slot.html", gin.H{
 		"calendar_name": calendar.CalendarName,
 		"calendar_id":   calendarID,
 	})
 }
 
-func (r *RequestHandler) SaveSlotSettings(c *gin.Context) {
+func (r *RequestHandler) SaveSlot(c *gin.Context) {
 	dayOfWeek := c.Request.FormValue("day_of_week")
 	startTime := c.Request.FormValue("start_time")
 	endTime := c.Request.FormValue("end_time")
@@ -127,7 +135,7 @@ func (r *RequestHandler) SaveSlotSettings(c *gin.Context) {
 
 	//c.HTML(201, "success_alert.html", gin.H{"msg": "slot added successfully"})
 
-	sslist, _ := r.slotSettingsRepository.FindAll()
+	sslist, _ := r.slotSettingsRepository.FindByCalendarID(calendarID)
 	ssdtolist := convertSlotSettings(sslist)
 
 	c.HTML(201, "slot_settings_table.html", gin.H{
@@ -140,25 +148,89 @@ func (r *RequestHandler) SaveSlotSettings(c *gin.Context) {
 func (r *RequestHandler) BookingsCalendar(c *gin.Context) {
 	calendar := cal(0)
 	weekdayOrder := []string{"monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"}
-	c.HTML(201, "bookings.html", gin.H{"Calendar": calendar, "Order": weekdayOrder})
+	c.HTML(201, "bookings_select_date.html", gin.H{"Calendar": calendar, "Order": weekdayOrder})
 }
 
 func (r *RequestHandler) UpdateCalenderSettings(c *gin.Context) {
 
 }
 
-func (r *RequestHandler) GetCalenderSettings(c *gin.Context) {
-	calendars, err := r.calendarRepo.FindByUserID(1)
+func (r *RequestHandler) GetMyCalenders(c *gin.Context) {
+	session := sessions.Default(c)
+	userIDRaw := session.Get("user_id")
+	userID := int64(0)
+	if userIDRaw != nil {
+		userID = userIDRaw.(int64)
+	}
+	calendars, err := r.calendarRepo.FindByUserID(userID)
 	if err != nil {
 		log.Error(err)
 		return
 	}
-	c.HTML(200, "view_calendars.html", gin.H{
+	c.HTML(200, "view_calendars_list.html", gin.H{
 		"Calendars": calendars,
 	})
 }
 
-func (r *RequestHandler) GetSlotSettingsByCalendarID(c *gin.Context) {
+func (r *RequestHandler) GetCalenders(c *gin.Context) {
+	emailParam := c.Query("user_email")
+	calendarIDParam := c.Query("calendar_id")
+
+	log.Debug(emailParam)
+	log.Debug(calendarIDParam)
+
+	if emailParam == "" && calendarIDParam == "" {
+		return
+	}
+
+	currentCalendar := cal(0)
+
+	if emailParam != "" {
+		//validate email
+		user, err := r.userRespository.FindByEmail(emailParam)
+		if err != nil {
+			log.Error(err)
+			return
+		}
+		calendars, err := r.calendarRepo.FindByUserID(user.Id)
+		if err != nil {
+			log.Error(err)
+			return
+		}
+
+		c.HTML(200, "calendars.html", gin.H{
+			"Calendars":       calendars,
+			"CurrentCalendar": currentCalendar,
+			"CurrentMonth":    "January",
+		})
+
+		return
+	}
+
+	var calendarID int64
+	if calendarIDParam != "" {
+		calendarIDInternal, err := strconv.ParseInt(calendarIDParam, 10, 64)
+		if err != nil {
+			return
+		}
+		calendarID = calendarIDInternal
+	}
+
+	calendar, err := r.calendarRepo.FindByID(calendarID)
+	if err != nil {
+		return
+	}
+
+	calendars := make([]model.CalendarSettings, 1)
+	calendars[0] = calendar
+	c.HTML(200, "view_calendars_list.html", gin.H{
+		"Calendars":       calendars,
+		"CurrentCalendar": currentCalendar,
+	})
+	return
+}
+
+func (r *RequestHandler) GetSlotsByCalendarID(c *gin.Context) {
 	calendarID, err := strconv.ParseInt(c.Param("calendar_id"), 10, 64)
 	if err != nil {
 		log.Error(err)
@@ -207,7 +279,7 @@ func (r *RequestHandler) TimeSlots(c *gin.Context) {
 	timeslots[1] = timeslot2
 	timeslots[2] = timeslot3
 
-	c.HTML(201, "timeslots.html", gin.H{
+	c.HTML(201, "bookings_select_timeslot.html", gin.H{
 		"Timeslots": timeslots,
 	})
 }
@@ -215,6 +287,8 @@ func (r *RequestHandler) TimeSlots(c *gin.Context) {
 type BookingsDays struct {
 	WeekDay string
 	Days    []int
+	Month   int
+	Year    int
 }
 
 func cal(month int) []BookingsDays {
@@ -240,56 +314,28 @@ func cal(month int) []BookingsDays {
 		}
 	}
 
-	// Define a map to store days for each weekday
-	daysPerWeekday := map[string][]int{
-		"monday":    make([]int, 0),
-		"tuesday":   make([]int, 0),
-		"wednesday": make([]int, 0),
-		"thursday":  make([]int, 0),
-		"friday":    make([]int, 0),
-		"saturday":  make([]int, 0),
-		"sunday":    make([]int, 0),
-	}
-
 	// Calculate last day of current month
 	lastDay := time.Date(currentYear, currentMonth+1, 0, 0, 0, 0, 0, time.UTC).AddDate(-1, 0, 0) // Subtract 1 day to get last day
 
-	// Loop through each day of the month
 	for day := 1; day <= lastDay.Day(); day++ { // Use lastDay.Day() instead of daysInMonth()
-		// Get the weekday of the current day
 		currentDay := time.Date(currentYear, currentMonth, day, 0, 0, 0, 0, time.UTC).Weekday()
-
-		// Add the day to the corresponding weekday map
 		switch currentDay {
 		case time.Monday:
-			daysPerWeekday["monday"] = append(daysPerWeekday["monday"], day)
 			calendar[0].Days = append(calendar[0].Days, day)
 		case time.Tuesday:
-			daysPerWeekday["tuesday"] = append(daysPerWeekday["tuesday"], day)
 			calendar[1].Days = append(calendar[1].Days, day)
 		case time.Wednesday:
-			daysPerWeekday["wednesday"] = append(daysPerWeekday["wednesday"], day)
 			calendar[2].Days = append(calendar[2].Days, day)
 		case time.Thursday:
-			daysPerWeekday["thursday"] = append(daysPerWeekday["thursday"], day)
 			calendar[3].Days = append(calendar[3].Days, day)
 		case time.Friday:
-			daysPerWeekday["friday"] = append(daysPerWeekday["friday"], day)
 			calendar[4].Days = append(calendar[4].Days, day)
 		case time.Saturday:
-			daysPerWeekday["saturday"] = append(daysPerWeekday["saturday"], day)
 			calendar[5].Days = append(calendar[5].Days, day)
 		case time.Sunday:
-			daysPerWeekday["sunday"] = append(daysPerWeekday["sunday"], day)
 			calendar[6].Days = append(calendar[6].Days, day)
 		}
 	}
-
-	fmt.Println("Days per weekday for current month:")
-	for weekday, days := range daysPerWeekday {
-		fmt.Printf("%-8s: %v\n", weekday, days)
-	}
-
 	return calendar
 }
 
@@ -349,7 +395,8 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 	}
 	session := sessions.Default(c)
 	session.Set("state", signedToken)
-	session.Set("user", email)
+	session.Set("user_id", user.Id)
+	session.Set("user_email", user.Email)
 	err = session.Save()
 	if err != nil {
 		log.Error("error while saving session", err)

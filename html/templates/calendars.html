@@ -1,4 +1,4 @@
-<div class="row" x-data="{ open: false , selected_calendar:'', selected_date:'' , show_select_date:false}">
+<div class="row" x-data="{ open: false , selected_calendar:'',selected_calendar_id:'', selected_date:'' , show_select_date:false}">
 <div id="calendars_view" class="col-md-6" x-show="!open">
       <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -8,7 +8,7 @@
       
     <table class="table table-hover table-striped">
         {{ range $i , $e := .Calendars}}
-                    <tr hx-get="/calendars/{{$e.ID}}/bookings" hx-swap="none" @click="open = true , selected_calendar='{{$e.CalendarName}}'">
+                    <tr hx-get="/calendars/{{$e.ID}}/bookings" hx-swap="none" @click="open = true , selected_calendar='{{$e.CalendarName}}',selected_calendar_id='{{$e.ID}}'">
                         <td> {{ $e.ID }}</td>
                         <td> <h6>{{ $e.CalendarName }}</h6></td>
                     </tr>
@@ -30,7 +30,7 @@
             <h5>select date: </h5>
             <div class="col">
                 <h5>
-                <span class="badge bg-primary">
+                <span class="badge bg-primary   ">
                     {{.CurrentMonth}}
                 </span>
             </h5>
@@ -47,7 +47,7 @@
                         {{$v.WeekDay}}
                     </td>
                     {{range $i, $value := $v.Days}}
-                    <td hx-get="/views/timeslots" hx-target="#timeslots_list">
+                    <td hx-get="/bookings?calendar_id=&date=01-01-2023" hx-target="#timeslots_list">
                         <button class="btn btn-light" @click="selected_date = '01-01-2024', show_select_date=true" >{{$value}}</button>
                     </td>
                     {{end}}
@@ -73,4 +73,9 @@
 
           </div>
     </div>
+    <script>
+        function getBookings() {
+            
+        }
+    </script>
 </div>

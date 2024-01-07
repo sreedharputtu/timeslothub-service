@@ -286,9 +286,14 @@ func (r *RequestHandler) TimeSlots(c *gin.Context) {
 
 type BookingsDays struct {
 	WeekDay string
-	Days    []int
+	Days    []Day
 	Month   int
 	Year    int
+}
+
+type Day struct {
+	Day  int
+	Date string
 }
 
 func cal(month int) []BookingsDays {
@@ -321,19 +326,40 @@ func cal(month int) []BookingsDays {
 		currentDay := time.Date(currentYear, currentMonth, day, 0, 0, 0, 0, time.UTC).Weekday()
 		switch currentDay {
 		case time.Monday:
-			calendar[0].Days = append(calendar[0].Days, day)
+			calendar[0].Days = append(calendar[0].Days, Day{
+				Day:  day,
+				Date: fmt.Sprintf("%d/%d/%d", day, currentMonth, currentYear),
+			})
 		case time.Tuesday:
-			calendar[1].Days = append(calendar[1].Days, day)
+			calendar[1].Days = append(calendar[1].Days, Day{
+				Day:  day,
+				Date: fmt.Sprintf("%d/%d/%d", day, currentMonth, currentYear),
+			})
 		case time.Wednesday:
-			calendar[2].Days = append(calendar[2].Days, day)
+			calendar[2].Days = append(calendar[2].Days, Day{
+				Day:  day,
+				Date: fmt.Sprintf("%d/%d/%d", day, currentMonth, currentYear),
+			})
 		case time.Thursday:
-			calendar[3].Days = append(calendar[3].Days, day)
+			calendar[3].Days = append(calendar[3].Days, Day{
+				Day:  day,
+				Date: fmt.Sprintf("%d/%d/%d", day, currentMonth, currentYear),
+			})
 		case time.Friday:
-			calendar[4].Days = append(calendar[4].Days, day)
+			calendar[4].Days = append(calendar[4].Days, Day{
+				Day:  day,
+				Date: fmt.Sprintf("%d/%d/%d", day, currentMonth, currentYear),
+			})
 		case time.Saturday:
-			calendar[5].Days = append(calendar[5].Days, day)
+			calendar[5].Days = append(calendar[5].Days, Day{
+				Day:  day,
+				Date: fmt.Sprintf("%d/%d/%d", day, currentMonth, currentYear),
+			})
 		case time.Sunday:
-			calendar[6].Days = append(calendar[6].Days, day)
+			calendar[6].Days = append(calendar[6].Days, Day{
+				Day:  day,
+				Date: fmt.Sprintf("%d/%d/%d", day, currentMonth, currentYear),
+			})
 		}
 	}
 	return calendar
@@ -411,4 +437,15 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 	// }
 	c.Redirect(http.StatusFound, "/")
 
+}
+
+func (rh *RequestHandler) GetBookings(c *gin.Context) {
+	selectedDateParam := c.Query("selected_date")
+	calendarIDParam := c.Query("calendar_id")
+	log.Error(selectedDateParam)
+	log.Error(calendarIDParam)
+	bookings := make([]model.Booking, 2)
+	bookings[0] = model.Booking{ID: 1}
+	bookings[1] = model.Booking{ID: 2}
+	c.JSON(200, bookings)
 }

@@ -70,5 +70,7 @@ func NewRouter(rh *handler.RequestHandler) *gin.Engine {
 
 	r.POST("/user/login", rh.Login)
 
+	r.GET("/bookings", rh.GetBookings)
+
 	return r
 }

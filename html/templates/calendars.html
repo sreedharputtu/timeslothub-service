@@ -52,10 +52,11 @@
                         </td>
                         {{range $i, $value := $v.Days}}
                         <td>
-                            <button class="btn btn-light" x-data="{selected_date:'{{$value.Date}}'}" @click="getBookings">
+                            <button class="btn btn-light" x-data="{selected_date:'{{$value.Date}}'}"
+                                @click="getBookings">
                                 {{$value.Day}}
                             </button>
-                                   
+
                         </td>
                         {{end}}
                     </tr>
@@ -77,20 +78,63 @@
             <h6>select date : </h6>
             <span x-text="selected_date"></span>
         </div>
-        <div id="timeslots_list" x-data="{bookings}">
+        <div id="timeslots_list">
+        </div>
+        <div x-data="createDataRetriever()" x-init="getData()">
+            USERS LIST
+            <ul>
+                <template x-for="user in users" :key="user.id">                    
+                    <li>                        
+                        <span class="" x-text="user.phone"></span>                        
+                    </li>
+                </template>
+            </ul>
         </div>
     </div>
     <script>
-        function getBookings(e) {
-            let fetchPromise = fetch("/bookings?calendar_id="+this.selected_calendar_id+"&selected_date="+this.selected_date)
-            let bookings;
-            fetchPromise.then((res)=>{
-                const jsonPromise = res.json();
-                jsonPromise.then((data)=>{
-                  bookings = data 
-                })
-           })
-           return '<div>hello</div>'
+        async function getBookings(e) {
+            let fetchPromise = await fetch("/bookings?calendar_id=" + this.selected_calendar_id + "&selected_date=" + this.selected_date)
+            console.log(fetchPromise)
+            fetchPromise.json().then((data) => {
+                var bookingsHTML  = ""
+                bookingsHTML = bookingsHTML + `<table class="table">
+                    <thead>   
+                    <tr>
+                            <th>Id</th>
+                            <th>Start time</th>
+                            <th>End time</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>`
+                for (i = 0; i < data.length; i++) {
+                    console.log(data[i].ID)
+                    bookingsHTML = bookingsHTML +
+                    `<tr>
+                        <td>${data[i].ID}</td>
+                        <td>${data[i].StartTime}</td>
+                        <td>${data[i].EndTime}</td>
+                        <td>${data[i].Status}</td>
+                        <td>
+                            <button x-on:click="createBooking(${this.selected_calendar_id},'${this.selected_date.toString()}',${data[i].StartTime},${data[i].EndTime})">book</button>
+                        </td>
+                    </tr>`
+                }
+                bookingsHTML = bookingsHTML + `</tbody>
+                                                </table>`
+                document.getElementById('timeslots_list').innerHTML = bookingsHTML
+            })
         }
-    </script>
-</div>
+        async function createBooking(calendar_id ,selected_date,starttime, endtime){
+            console.log(calendar_id )
+            console.log(selected_date)
+            console.log(starttime )
+            console.log(endtime )
+
+            fetch("/bookings" ,
+            {method: "POST"})
+            
+        }
+   </script>
+</div>      

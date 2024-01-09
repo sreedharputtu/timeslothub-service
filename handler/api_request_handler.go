@@ -19,14 +19,15 @@ const (
 	timeformat = "^[0-2][0-3]:[0-5][0-9]+$"
 )
 
-func NewRequestHandler(userRepository repository.UsersRepository, ssr repository.SlotSettingsRepository, cri repository.CalendarSettingsRepository) *RequestHandler {
-	return &RequestHandler{userRespository: userRepository, slotSettingsRepository: ssr, calendarRepo: cri}
+func NewRequestHandler(userRepository repository.UsersRepository, ssr repository.SlotSettingsRepository, cri repository.CalendarSettingsRepository, br repository.BookingRepository) *RequestHandler {
+	return &RequestHandler{userRespository: userRepository, slotSettingsRepository: ssr, calendarRepo: cri, br: br}
 }
 
 type RequestHandler struct {
 	userRespository        repository.UsersRepository
 	slotSettingsRepository repository.SlotSettingsRepository
 	calendarRepo           repository.CalendarSettingsRepository
+	br                     repository.BookingRepository
 }
 
 func Health(c *gin.Context) {
@@ -448,4 +449,22 @@ func (rh *RequestHandler) GetBookings(c *gin.Context) {
 	bookings[0] = model.Booking{ID: 1}
 	bookings[1] = model.Booking{ID: 2}
 	c.JSON(200, bookings)
+}
+
+func (rh *RequestHandler) SaveBooking(c *gin.Context) {
+	var req CreateBookingRequestDTO
+	err := c.BindJSON(&req)
+	if err != nil {
+		log.Error(err)
+		c.Status(400)
+		return
+	}
+
+	err = rh.br.Save(toBookingModel(req, int64(1)))
+	if err != nil {
+		log.Error(err)
+		c.Status(500)
+		return
+	}
+
 }

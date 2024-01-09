@@ -15,6 +15,7 @@ func main() {
 	ur := repository.NewUserRepository(db)
 	ssr := repository.NewSlotSettingsRepository(db)
 	cri := repository.NewCalendarRepoImpl(db)
-	rh := handler.NewRequestHandler(ur, ssr, cri)
+	br := repository.NewBookingsRepository(db)
+	rh := handler.NewRequestHandler(ur, ssr, cri, br)
 	router.NewRouter(rh).Run()
 }

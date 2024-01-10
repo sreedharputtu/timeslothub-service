@@ -44,7 +44,6 @@ func convertSlotSettings(slotSettingsList []model.SlotSettings) []SlotSettingsDt
 }
 
 type CreateBookingRequestDTO struct {
-	ID          int64  `json:"id"`
 	CalendarID  int64  `json:"calendar_id"`
 	BookingDate string `json:"booking_date"`
 	StartTime   string `json:"start_time"`
@@ -54,15 +53,10 @@ type CreateBookingRequestDTO struct {
 
 func toBookingModel(dto CreateBookingRequestDTO, userID int64) model.Booking {
 	bookingDate, _ := time.Parse("01/02/2003", dto.BookingDate)
-	startTime, _ := strconv.Atoi(dto.StartTime)
-	endTime, _ := strconv.Atoi(dto.EndTime)
 	return model.Booking{
-		ID:          dto.ID,
 		UserID:      userID,
 		CalendarID:  dto.CalendarID,
 		Status:      "pending",
 		BookingDate: bookingDate,
-		StartTime:   startTime,
-		EndTime:     endTime,
 	}
 }

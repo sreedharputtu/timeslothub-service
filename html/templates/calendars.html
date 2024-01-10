@@ -83,9 +83,9 @@
         <div x-data="createDataRetriever()" x-init="getData()">
             USERS LIST
             <ul>
-                <template x-for="user in users" :key="user.id">                    
-                    <li>                        
-                        <span class="" x-text="user.phone"></span>                        
+                <template x-for="user in users" :key="user.id">
+                    <li>
+                        <span class="" x-text="user.phone"></span>
                     </li>
                 </template>
             </ul>
@@ -96,7 +96,7 @@
             let fetchPromise = await fetch("/bookings?calendar_id=" + this.selected_calendar_id + "&selected_date=" + this.selected_date)
             console.log(fetchPromise)
             fetchPromise.json().then((data) => {
-                var bookingsHTML  = ""
+                var bookingsHTML = ""
                 bookingsHTML = bookingsHTML + `<table class="table">
                     <thead>   
                     <tr>
@@ -111,13 +111,13 @@
                 for (i = 0; i < data.length; i++) {
                     console.log(data[i].ID)
                     bookingsHTML = bookingsHTML +
-                    `<tr>
+                        `<tr>
                         <td>${data[i].ID}</td>
-                        <td>${data[i].StartTime}</td>
-                        <td>${data[i].EndTime}</td>
+                        <td>${data[i].StartDateTime}</td>
+                        <td>${data[i].EndDateTime}</td>
                         <td>${data[i].Status}</td>
                         <td>
-                            <button x-on:click="createBooking(${this.selected_calendar_id},'${this.selected_date.toString()}',${data[i].StartTime},${data[i].EndTime})">book</button>
+                            <button x-on:click="createBooking(${this.selected_calendar_id},'${this.selected_date.toString()}','${new Date(data[i].StartDateTime).toString()}','${new Date(data[i].EndDateTime).toString()}')">book</button>
                         </td>
                     </tr>`
                 }
@@ -126,15 +126,23 @@
                 document.getElementById('timeslots_list').innerHTML = bookingsHTML
             })
         }
-        async function createBooking(calendar_id ,selected_date,starttime, endtime){
-            console.log(calendar_id )
-            console.log(selected_date)
-            console.log(starttime )
-            console.log(endtime )
-
-            fetch("/bookings" ,
-            {method: "POST"})
-            
+        async function createBooking(calendar_id, selected_date, start_time, end_time , email) {
+            request = `{
+                "calendar_id":${calendar_id},
+                "booking_date":"${selected_date}",
+                "start_time":${start_time},
+                "end_time":${end_time},
+                "email":""
+            }`;
+            console.log(request)
+            let fetchPromise = fetch("/bookings",
+                {
+                    method: "POST",
+                    body: request,
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                })
         }
-   </script>
-</div>      
+    </script>
+</div>

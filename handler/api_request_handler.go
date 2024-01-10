@@ -446,7 +446,7 @@ func (rh *RequestHandler) GetBookings(c *gin.Context) {
 	log.Error(selectedDateParam)
 	log.Error(calendarIDParam)
 	bookings := make([]model.Booking, 2)
-	bookings[0] = model.Booking{ID: 1}
+	bookings[0] = model.Booking{ID: 1, StartDateTime: time.Now(), EndDateTime: time.Now()}
 	bookings[1] = model.Booking{ID: 2}
 	c.JSON(200, bookings)
 }

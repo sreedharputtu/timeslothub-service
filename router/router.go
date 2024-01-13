@@ -43,8 +43,7 @@ func NewRouter(rh *handler.RequestHandler) *gin.Engine {
 	})
 
 	///views/calendars/settings
-
-	protected.GET("/pages/calendars/create", func(ctx *gin.Context) {
+	protected.GET("/pages/my/calendars/create", func(ctx *gin.Context) {
 		ctx.HTML(201, "create_calendar.html", gin.H{})
 	})
 

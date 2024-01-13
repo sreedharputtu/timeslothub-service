@@ -1,15 +1,20 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
       <li class="breadcrumb-item">create calendar</li>
-      <li class="breadcrumb-item">add operational slots</li>
+      <li class="breadcrumb-item">add time slots</li>
     </ol>
   </nav>
-<div id="slot_settings">
-    <span>create operational time slots for calendar: <h5>{{.calendar_name}}</h5></p>
+  <hr>
+<div id="slot_settings" x-data="{
+    timezone_offset:0 , calendar_id:{{.calendar_id}}
+}" x-init="timezone_offset = new Date().getTimezoneOffset()">
+    <div>
+     <h3><span class="badge bg-light text-dark">{{.calendar_name}}</span></h3> 
+    </div>
     <form  hx-post="/api/v1/slots" hx-target="#slot_settings_table">
         <fieldset>
-            <div class="pure-control-group">
-                <label for="day_of_week" class="form-label" >day of week</label>
+            <div>
+                <label for="day_of_week" class="form-label" >select day</label>
                 <select id="day_of_week" class="form-select" name="day_of_week">
                     <option>Monday</option>
                     <option>Tuseday</option>
@@ -31,11 +36,11 @@
                 <span >hh:mm</span>
             </div>
             <div>
-                <input type="text" name="calendar_id" id="calendar_id" value="{{.calendar_id}}" class="form-control" style="pointer-events: none;background: grey;">
+                <input type="hidden" name="calendar_id" id="calendar_id" x-model="calendar_id" class="form-control" style="pointer-events: none;background: grey;">
+                <input type="hidden" name="calendar_time_offset" x-model="timezone_offset" class="form-control"  style="pointer-events: none;background: grey;">
             </div>
-
             <div>
-            <button type="submit" class="btn btn-success"> add </button>
+            <button type="submit" class="btn btn-primary"> add </button>
             </div>
         </fieldset>
     </form>

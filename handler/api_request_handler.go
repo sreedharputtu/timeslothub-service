@@ -63,6 +63,14 @@ func (r *RequestHandler) SaveMyCalendar(c *gin.Context) {
 		autoAccept = true
 	}
 
+	utcOffsetStr := c.Request.FormValue("local_time_offset")
+	utcOffset, err := strconv.Atoi(utcOffsetStr)
+
+	if err != nil {
+		c.Status(400)
+		return
+	}
+
 	session := sessions.Default(c)
 	userIDRaw := session.Get("user_id")
 	if userIDRaw == nil {
@@ -76,6 +84,7 @@ func (r *RequestHandler) SaveMyCalendar(c *gin.Context) {
 		CalendarName: c.Request.FormValue("calendar_name"),
 		SlotTime:     int32(slotTime),
 		AutoAccept:   autoAccept,
+		UTCOffset:    utcOffset,
 		UserID:       userID,
 		CreatedAt:    time.Now(),
 	}
@@ -440,9 +449,56 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 
 }
 
+type BookingSlotDTO struct {
+	ID         int64
+	CalendarID int64
+	StartTime  string
+	EndTime    string
+	Status     string
+}
+
+func convertBookingsModelToDTO(bookings []model.Booking) []BookingSlotDTO {
+	var dtos []BookingSlotDTO
+	for _, booking := range bookings {
+		dtos = append(dtos, BookingSlotDTO{
+			ID: booking.ID,
+		})
+	}
+	return dtos
+}
+
 func (rh *RequestHandler) GetBookings(c *gin.Context) {
 	selectedDateParam := c.Query("selected_date")
+	selectedDayParam := c.Query("selected_day")
 	calendarIDParam := c.Query("calendar_id")
+
+	calendarID, err := strconv.ParseInt(calendarIDParam, 10, 64)
+	if err != nil {
+		c.Status(400)
+		return
+	}
+
+	selectedCalendar, err := rh.calendarRepo.FindByID(calendarID)
+	if err != nil {
+		c.Status(500)
+		return
+	}
+	// Fetch slots
+	slots, err := rh.slotSettingsRepository.FindByCalendarID(calendarID)
+	if err != nil {
+		c.Status(500)
+		return
+	}
+	var selectedSlots []model.SlotSettings
+	for _, slot := range slots {
+		if strings.EqualFold(slot.DayOfWeek, selectedDayParam) {
+			selectedSlots = append(selectedSlots, slot)
+		}
+	}
+
+	//selectedCalendar.SlotTime
+	//create bookings
+
 	log.Error(selectedDateParam)
 	log.Error(calendarIDParam)
 	bookings := make([]model.Booking, 2)

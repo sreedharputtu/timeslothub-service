@@ -1,5 +1,5 @@
 <div class="row"
-    x-data="{ open: false , selected_calendar:'',selected_calendar_id:'', selected_date:'', show_select_date:false}">
+    x-data="{ open: false , selected_calendar:'',selected_calendar_id:'', selected_date:'', show_select_date:false , show_bookings_list:false}">
     <div id="calendars_view" class="col-md-6" x-show="!open">
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -28,7 +28,7 @@
                 </ol>
             </nav>
             <h6>selected calendar : </h6>
-            <h4><span x-text="selected_calendar" class="badge bg-info"></span></h4>
+            <h4><span x-text="selected_calendar" class="badge bg-dark"></span></h4>
 
             <div class="row">
                 <h5>select date: </h5>
@@ -46,17 +46,16 @@
             <table>
                 <tbody>
                     {{range $i , $v := .CurrentCalendar }}
-                    <tr style="height: 25px;">
+                    <tr style="height: 40px;">
                         <td>
                             {{$v.WeekDay}}
                         </td>
                         {{range $i, $value := $v.Days}}
                         <td>
-                            <button class="btn btn-light" x-data="{selected_date:'{{$value.Date}}'}"
-                                @click="getBookings">
+                            <a style="padding:5px;margin:2px;" class="bg-light" x-data="{selected_date:'{{$value.Date}}'}"
+                                @click="getBookings , show_bookings_list=true">
                                 {{$value.Day}}
-                            </button>
-
+                        </a>
                         </td>
                         {{end}}
                     </tr>
@@ -78,26 +77,26 @@
             <h6>select date : </h6>
             <span x-text="selected_date"></span>
         </div>
-        <div id="timeslots_list">
-        </div>
-        <div x-data="createDataRetriever()" x-init="getData()">
-            USERS LIST
-            <ul>
-                <template x-for="user in users" :key="user.id">
-                    <li>
-                        <span class="" x-text="user.phone"></span>
-                    </li>
-                </template>
-            </ul>
+        <div  id="timeslots_list" x-data="{bookings:[]}" >
         </div>
     </div>
     <script>
+
+        async function fetchBookings(e){
+            let fetchPromise = await fetch("/bookings?calendar_id=" + this.selected_calendar_id + "&selected_date=" + this.selected_date)
+            console.log(fetchPromise)
+            fetchPromise.json().then((data) =>{
+                return data
+            })
+        }
+
         async function getBookings(e) {
             let fetchPromise = await fetch("/bookings?calendar_id=" + this.selected_calendar_id + "&selected_date=" + this.selected_date)
             console.log(fetchPromise)
             fetchPromise.json().then((data) => {
                 var bookingsHTML = ""
-                bookingsHTML = bookingsHTML + `<table class="table">
+                bookingsHTML = bookingsHTML + 
+                `<table class='table'>
                     <thead>   
                     <tr>
                             <th>Id</th>

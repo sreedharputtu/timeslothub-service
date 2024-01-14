@@ -1,5 +1,5 @@
 
-<div id="calendar_settings" style="max-width: 300px;" x-data>
+<div id="calendar_settings" style="max-width: 300px;" x-data="timezone_offset:0" x-init="timezone_offset = new Date().getTimezoneOffset()">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item">create calendar</li>
@@ -22,7 +22,10 @@
             <input type="checkbox" name="auto_accept" id="auto_accept"> auto accept
         </label>
     </div>
-        <button type="submit" class="btn btn-primary">Next</button>
+    <div>
+        <input type="hidden" x-model="timezone_offset" name="local_time_offset">
+    </div>
+        <button type="submit" class="btn btn-primary">Save and Next</button>
         </fieldset>
     </form>
 </div>

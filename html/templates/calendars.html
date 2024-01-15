@@ -28,7 +28,7 @@
                 </ol>
             </nav>
             <h6>selected calendar : </h6>
-            <h4><span x-text="selected_calendar" class="badge bg-dark"></span></h4>
+            <h4><span x-text="selected_calendar" class="bg-light text-dark"></span></h4>
 
             <div class="row">
                 <h5>select date: </h5>
@@ -112,11 +112,11 @@
                     bookingsHTML = bookingsHTML +
                         `<tr>
                         <td>${data[i].ID}</td>
-                        <td>${data[i].StartDateTime}</td>
-                        <td>${data[i].EndDateTime}</td>
+                        <td>${data[i].StartTime}</td>
+                        <td>${data[i].EndTime}</td>
                         <td>${data[i].Status}</td>
                         <td>
-                            <button x-on:click="createBooking(${this.selected_calendar_id},'${this.selected_date.toString()}','${new Date(data[i].StartDateTime).toString()}','${new Date(data[i].EndDateTime).toString()}')">book</button>
+                            <button class="btn btn-primary btn-sm" x-on:click="createBooking(${this.selected_calendar_id},'${this.selected_date.toString()}','${new Date(data[i].StartDateTime).toString()}','${new Date(data[i].EndDateTime).toString()}')">book</button>
                         </td>
                     </tr>`
                 }

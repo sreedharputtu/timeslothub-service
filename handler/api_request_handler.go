@@ -468,7 +468,7 @@ func convertBookingsModelToDTO(bookings []model.Booking) []BookingSlotDTO {
 }
 
 func (rh *RequestHandler) GetBookings(c *gin.Context) {
-	selectedDateParam := c.Query("selected_date")
+	//selectedDateParam := c.Query("selected_date")
 	selectedDayParam := c.Query("selected_day")
 	calendarIDParam := c.Query("calendar_id")
 
@@ -491,20 +491,31 @@ func (rh *RequestHandler) GetBookings(c *gin.Context) {
 	}
 	var selectedSlots []model.SlotSettings
 	for _, slot := range slots {
-		if strings.EqualFold(slot.DayOfWeek, selectedDayParam) {
+
+		if strings.EqualFold(strings.TrimSpace(slot.DayOfWeek), selectedDayParam) {
 			selectedSlots = append(selectedSlots, slot)
 		}
 	}
 
-	//selectedCalendar.SlotTime
-	//create bookings
+	var bookingSlots []BookingSlotDTO
+	bookingSlotIndex := int64(0)
+	for _, slot := range selectedSlots {
+		startTime := slot.StartTime
+		endTime := startTime
+		for endTime < slot.EndTime {
+			endTime = startTime + int((selectedCalendar.SlotTime/60)*100)
+			bookingSlots = append(bookingSlots, BookingSlotDTO{
+				ID:         bookingSlotIndex,
+				CalendarID: selectedCalendar.ID,
+				StartTime:  strconv.Itoa(startTime),
+				EndTime:    strconv.Itoa(endTime),
+				Status:     "pending",
+			})
+			startTime = endTime
+		}
+	}
 
-	log.Error(selectedDateParam)
-	log.Error(calendarIDParam)
-	bookings := make([]model.Booking, 2)
-	bookings[0] = model.Booking{ID: 1, StartDateTime: time.Now(), EndDateTime: time.Now()}
-	bookings[1] = model.Booking{ID: 2}
-	c.JSON(200, bookings)
+	c.JSON(200, bookingSlots)
 }
 
 func (rh *RequestHandler) SaveBooking(c *gin.Context) {

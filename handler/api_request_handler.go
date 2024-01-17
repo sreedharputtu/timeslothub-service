@@ -503,7 +503,8 @@ func (rh *RequestHandler) GetBookings(c *gin.Context) {
 		startTime := slot.StartTime
 		endTime := startTime
 		for endTime < slot.EndTime {
-			endTime = startTime + int((selectedCalendar.SlotTime/60)*100)
+			currentSlotTime := int((float64(selectedCalendar.SlotTime) / float64(60)) * 100)
+			endTime = startTime + currentSlotTime
 			bookingSlots = append(bookingSlots, BookingSlotDTO{
 				ID:         bookingSlotIndex,
 				CalendarID: selectedCalendar.ID,

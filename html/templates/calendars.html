@@ -18,7 +18,7 @@
             {{end}}
         </table>
     </div>
-    <div id="select_calendar_date" class="col-md-6" x-show="open">
+    <div id="select_calendar_date" class="col-md-4" x-show="open">
         <div>
             <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -27,44 +27,46 @@
                     <li class="breadcrumb-item active">Date</li>
                 </ol>
             </nav>
-            <h6>selected calendar : </h6>
-            <h4><span x-text="selected_calendar" class="bg-light text-dark"></span></h4>
-
-            <div class="row">
-                <h5>select date: </h5>
-                <div class="col">
-                    <h5>
+            <div>
+                <span>selected calendar </span>
+                <div style="margin-top:20px;margin-bottom: 20px;">
+                    <h5><span x-text="selected_calendar" class="bg-light text-dark"></span></h5>
+                </div>
+            </div>
+            <span>select date <span></span>
+                <div class="row" style="margin-top: 20px;margin-bottom: 20px;">
+                    <div class="col-6">
                         <span class="badge bg-primary">
                             {{.CurrentMonth}}
                         </span>
-                    </h5>
+                    </div>
+                    <div class="col-6">
+                        <a href="#">Next</a>
+                    </div>
                 </div>
-                <div class="col">
-                    <a href="#">Next</a>
-                </div>
-            </div>
-            <table>
-                <tbody>
-                    {{range $i , $v := .CurrentCalendar }}
-                    <tr style="height: 40px;">
-                        <td>
-                            {{$v.WeekDay}}
-                        </td>
-                        {{range $i, $value := $v.Days}}
-                        <td>
-                            <a style="padding:5px;margin:2px;" class="bg-light" x-data="{selected_date:'{{$value.Date}}',selected_day:'{{$v.WeekDay}}'}"
-                                @click="getBookings , show_bookings_list=true">
-                                {{$value.Day}}
-                        </a>
-                        </td>
+                <table>
+                    <tbody>
+                        {{range $i , $v := .CurrentCalendar }}
+                        <tr style="height: 40px;">
+                            <td>
+                                {{$v.WeekDay}}
+                            </td>
+                            {{range $i, $value := $v.Days}}
+                            <td>
+                                <a style="padding:5px;margin:2px;" class="bg-light"
+                                    x-data="{selected_date:'{{$value.Date}}',selected_day:'{{$v.WeekDay}}'}"
+                                    @click="getBookings , show_bookings_list=true">
+                                    {{$value.Day}}
+                                </a>
+                            </td>
+                            {{end}}
+                        </tr>
                         {{end}}
-                    </tr>
-                    {{end}}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-8">
         <div x-show="show_select_date">
             <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -74,28 +76,28 @@
                     <li class="breadcrumb-item active">Bookings</li>
                 </ol>
             </nav>
-            <h6>select date : </h6>
+            <span>select date : </span>
             <span x-text="selected_date"></span>
         </div>
-        <div  id="timeslots_list" x-data="{bookings:[]}" >
+        <div id="timeslots_list" x-data="{bookings:[]}">
         </div>
     </div>
     <script>
 
         async function getBookings(e) {
-            let fetchPromise = await fetch("/bookings?calendar_id=" + this.selected_calendar_id + "&selected_date=" + this.selected_date+"&selected_day="+this.selected_day)
+            let fetchPromise = await fetch("/bookings?calendar_id=" + this.selected_calendar_id + "&selected_date=" + this.selected_date + "&selected_day=" + this.selected_day)
             console.log(fetchPromise)
             fetchPromise.json().then((data) => {
                 var bookingsHTML = ""
-                bookingsHTML = bookingsHTML + 
-                `<table class='table'>
+                bookingsHTML = bookingsHTML +
+                    `<table class='table table-striped table-borderless table-sm'>
                     <thead>   
                     <tr>
-                            <th>Id</th>
-                            <th>Start time</th>
-                            <th>End time</th>
-                            <th>Status</th>
-                            <th>Action</th>
+                            <th>id</th>
+                            <th>start time</th>
+                            <th>end time</th>
+                            <th>status</th>
+                            <th>action</th>
                         </tr>
                         </thead>
                         <tbody>`
@@ -108,7 +110,7 @@
                         <td>${data[i].EndTime}</td>
                         <td>${data[i].Status}</td>
                         <td>
-                            <button class="btn btn-primary btn-sm" x-on:click="createBooking(${this.selected_calendar_id},'${this.selected_date.toString()}','${new Date(data[i].StartDateTime).toString()}','${new Date(data[i].EndDateTime).toString()}')">book</button>
+                            <button class="btn btn-link btn-sm" x-on:click="createBooking(${this.selected_calendar_id},'${this.selected_date.toString()}','${new Date(data[i].StartDateTime).toString()}','${new Date(data[i].EndDateTime).toString()}')">book</button>
                         </td>
                     </tr>`
                 }
@@ -117,7 +119,7 @@
                 document.getElementById('timeslots_list').innerHTML = bookingsHTML
             })
         }
-        async function createBooking(calendar_id, selected_date, start_time, end_time , email) {
+        async function createBooking(calendar_id, selected_date, start_time, end_time, email) {
             request = `{
                 "calendar_id":${calendar_id},
                 "booking_date":"${selected_date}",

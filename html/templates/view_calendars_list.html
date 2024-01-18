@@ -1,12 +1,18 @@
-<div id="calendars_view" >
+<div class="row">
+<div id="calendars_view" class="col-md-4">
     <h6> Active calendars</h6>
+    <div style="margin-top:20px;">
     <table class="table table-hover table-striped">
         {{ range $i , $e := .Calendars}}
-                    <tr hx-get="/api/v1/calendars/{{$e.ID}}/slots" hx-target="#calendars_view">
+                    <tr hx-get="/api/v1/calendars/{{$e.ID}}/slots" hx-target="#slots_view">
                         <td> {{ $e.ID }}</td>
                         <td> <h6>{{ $e.CalendarName }}</h6></td>
                     </tr>
                 
         {{end}}
     </table>
+</div>
+</div>
+<div class="col-md-8" id="slots_view">
+</div>
 </div>

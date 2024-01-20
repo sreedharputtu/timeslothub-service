@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/labstack/gommon/log"
 	"github.com/sreedharputtu/timeslothub-service/model"
 	"gorm.io/gorm"
 )
@@ -36,5 +37,6 @@ func (ssr *SlotSettingsRepositoryImpl) FindByCalendarID(calendarID int64) ([]mod
 	if err != nil {
 		return slotSettingsList, err
 	}
+	log.Debug(slotSettingsList)
 	return slotSettingsList, nil
 }

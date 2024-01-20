@@ -53,7 +53,7 @@ func NewRouter(rh *handler.RequestHandler) *gin.Engine {
 
 	protected.GET("/views/slots/bookings", rh.BookingsCalendar)
 
-	protected.GET("/views/timeslots", rh.TimeSlots)
+	//protected.GET("/views/timeslots", rh.TimeSlots)
 
 	protected.GET("/user_logout", func(ctx *gin.Context) {
 		session := sessions.Default(ctx)

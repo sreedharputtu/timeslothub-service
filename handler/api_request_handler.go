@@ -98,29 +98,38 @@ func (r *RequestHandler) SaveMyCalendar(c *gin.Context) {
 
 func (r *RequestHandler) SaveSlot(c *gin.Context) {
 	dayOfWeek := c.Request.FormValue("day_of_week")
-	startTime := c.Request.FormValue("start_time")
-	endTime := c.Request.FormValue("end_time")
+	startTimeStr := c.Request.FormValue("start_time")
+	endTimeStr := c.Request.FormValue("end_time")
 	calendarIDStr := c.Request.FormValue("calendar_id")
 	log.Debug(fmt.Sprintf("slot is creating for  calendar id:%s", calendarIDStr))
 
 	calendarID, _ := strconv.ParseInt(calendarIDStr, 10, 64)
 
-	match, err := regexp.MatchString(timeformat, startTime)
+	match, err := regexp.MatchString(timeformat, startTimeStr)
 	if err != nil || !match {
 		log.Error(err)
 		c.Status(400)
 		return
 	}
 
-	match, err = regexp.MatchString(timeformat, endTime)
+	match, err = regexp.MatchString(timeformat, endTimeStr)
 	if err != nil || !match {
 		log.Error(err)
 		c.Status(400)
 		return
 	}
 
-	start, _ := strconv.Atoi(strings.Replace(startTime, ":", "", -1))
-	end, _ := strconv.Atoi(strings.Replace(endTime, ":", "", -1))
+	start, _ := strconv.Atoi(strings.Replace(startTimeStr, ":", "", -1))
+	end, _ := strconv.Atoi(strings.Replace(endTimeStr, ":", "", -1))
+
+	startTime, err := time.Parse("15:04", startTimeStr)
+	log.Info(fmt.Sprintf("start time:%v", startTime))
+
+	endTime, err := time.Parse("15:04", endTimeStr)
+	log.Info(fmt.Sprintf("end time:%v", endTime))
+
+	fallback := endTime.Format("15:04")
+	log.Info(fmt.Sprintf("fallback time:%s", fallback))
 
 	if start > end {
 		log.Error("compare failure")
@@ -131,9 +140,10 @@ func (r *RequestHandler) SaveSlot(c *gin.Context) {
 	log.Debug("day_of_week:", dayOfWeek)
 
 	slotSettings := model.SlotSettings{
-		DayOfWeek:  dayOfWeek,
-		StartTime:  start,
-		EndTime:    end,
+		DayOfWeek: dayOfWeek,
+		StartTime: &startTime,
+		EndTime:   &endTime,
+		//TODO
 		UserID:     int64(1),
 		CalendarID: calendarID,
 	}
@@ -252,46 +262,12 @@ func (r *RequestHandler) GetSlotsByCalendarID(c *gin.Context) {
 		return
 	}
 
+	convertSlotSettings(slots)
+
 	c.HTML(201, "slot_settings_table.html", gin.H{
-		"SlotSettingsList": slots,
+		"SlotSettingsList": convertSlotSettings(slots),
 	})
 
-}
-
-type Timeslot struct {
-	StartTime int16
-	EndTime   int16
-	IsBooked  bool
-}
-
-func (r *RequestHandler) TimeSlots(c *gin.Context) {
-	timeslots := make([]Timeslot, 3)
-
-	timeslot1 := Timeslot{
-		0000,
-		1200,
-		false,
-	}
-
-	timeslot2 := Timeslot{
-		1200,
-		1400,
-		true,
-	}
-
-	timeslot3 := Timeslot{
-		1400,
-		1600,
-		false,
-	}
-
-	timeslots[0] = timeslot1
-	timeslots[1] = timeslot2
-	timeslots[2] = timeslot3
-
-	c.HTML(201, "bookings_select_timeslot.html", gin.H{
-		"Timeslots": timeslots,
-	})
 }
 
 type BookingsDays struct {
@@ -502,14 +478,14 @@ func (rh *RequestHandler) GetBookings(c *gin.Context) {
 	for _, slot := range selectedSlots {
 		startTime := slot.StartTime
 		endTime := startTime
-		for endTime < slot.EndTime {
-			currentSlotTime := int((float64(selectedCalendar.SlotTime) / float64(60)) * 100)
-			endTime = startTime + currentSlotTime
+		for endTime.Compare(*slot.EndTime) < 0 {
+			currentEnd := startTime.Add(time.Duration(selectedCalendar.SlotTime) * time.Minute)
+			endTime = &currentEnd
 			bookingSlots = append(bookingSlots, BookingSlotDTO{
 				ID:         bookingSlotIndex,
 				CalendarID: selectedCalendar.ID,
-				StartTime:  strconv.Itoa(startTime),
-				EndTime:    strconv.Itoa(endTime),
+				StartTime:  startTime.Format("15:04"),
+				EndTime:    endTime.Format("15:04"),
 				Status:     "pending",
 			})
 			startTime = endTime

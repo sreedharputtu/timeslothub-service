@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"fmt"
-	"strconv"
 	"time"
 
 	"github.com/sreedharputtu/timeslothub-service/model"
@@ -25,19 +23,14 @@ type SlotSettingsDto struct {
 func convertSlotSettings(slotSettingsList []model.SlotSettings) []SlotSettingsDto {
 	slotSettingsDtoList := make([]SlotSettingsDto, len(slotSettingsList))
 	for i, modal := range slotSettingsList {
-		startTimeStr := strconv.Itoa(modal.StartTime)
-		endTimeStr := strconv.Itoa(modal.EndTime)
-
+		startTimeStr := modal.StartTime.Format("15:04")
+		endTimeStr := modal.EndTime.Format("15:04")
 		dto := SlotSettingsDto{
 			ID:        modal.ID,
 			DayOfWeek: modal.DayOfWeek,
-			StartTime: fmt.Sprintf("%s:%s", startTimeStr[:2], startTimeStr[2:]),
-			EndTime:   fmt.Sprintf("%s:%s", endTimeStr[:2], endTimeStr[2:]),
+			StartTime: startTimeStr,
+			EndTime:   endTimeStr,
 		}
-
-		//1235
-		//
-
 		slotSettingsDtoList[i] = dto
 	}
 	return slotSettingsDtoList

@@ -119,23 +119,11 @@ func (r *RequestHandler) SaveSlot(c *gin.Context) {
 		return
 	}
 
-	start, _ := strconv.Atoi(strings.Replace(startTimeStr, ":", "", -1))
-	end, _ := strconv.Atoi(strings.Replace(endTimeStr, ":", "", -1))
-
 	startTime, err := time.Parse("15:04", startTimeStr)
 	log.Info(fmt.Sprintf("start time:%v", startTime))
 
 	endTime, err := time.Parse("15:04", endTimeStr)
 	log.Info(fmt.Sprintf("end time:%v", endTime))
-
-	fallback := endTime.Format("15:04")
-	log.Info(fmt.Sprintf("fallback time:%s", fallback))
-
-	if start > end {
-		log.Error("compare failure")
-		c.Status(400)
-		return
-	}
 
 	log.Debug("day_of_week:", dayOfWeek)
 
@@ -222,6 +210,7 @@ func (r *RequestHandler) GetCalenders(c *gin.Context) {
 			"Calendars":       calendars,
 			"CurrentCalendar": currentCalendar,
 			"CurrentMonth":    "January",
+			"Email":           emailParam,
 		})
 
 		return
@@ -314,41 +303,47 @@ func cal(month int) []BookingsDays {
 		case time.Monday:
 			calendar[0].Days = append(calendar[0].Days, Day{
 				Day:  day,
-				Date: fmt.Sprintf("%d/%d/%d", day, currentMonth, currentYear),
+				Date: prepareDate(day, currentMonth, currentYear),
 			})
 		case time.Tuesday:
 			calendar[1].Days = append(calendar[1].Days, Day{
 				Day:  day,
-				Date: fmt.Sprintf("%d/%d/%d", day, currentMonth, currentYear),
+				Date: prepareDate(day, currentMonth, currentYear),
 			})
 		case time.Wednesday:
 			calendar[2].Days = append(calendar[2].Days, Day{
 				Day:  day,
-				Date: fmt.Sprintf("%d/%d/%d", day, currentMonth, currentYear),
+				Date: prepareDate(day, currentMonth, currentYear),
 			})
 		case time.Thursday:
 			calendar[3].Days = append(calendar[3].Days, Day{
 				Day:  day,
-				Date: fmt.Sprintf("%d/%d/%d", day, currentMonth, currentYear),
+				Date: prepareDate(day, currentMonth, currentYear),
 			})
 		case time.Friday:
 			calendar[4].Days = append(calendar[4].Days, Day{
 				Day:  day,
-				Date: fmt.Sprintf("%d/%d/%d", day, currentMonth, currentYear),
+				Date: prepareDate(day, currentMonth, currentYear),
 			})
 		case time.Saturday:
 			calendar[5].Days = append(calendar[5].Days, Day{
 				Day:  day,
-				Date: fmt.Sprintf("%d/%d/%d", day, currentMonth, currentYear),
+				Date: prepareDate(day, currentMonth, currentYear),
 			})
 		case time.Sunday:
 			calendar[6].Days = append(calendar[6].Days, Day{
 				Day:  day,
-				Date: fmt.Sprintf("%d/%d/%d", day, currentMonth, currentYear),
+				Date: prepareDate(day, currentMonth, currentYear),
 			})
 		}
 	}
 	return calendar
+}
+
+func prepareDate(d int, m time.Month, y int) string {
+	// prefixes day / month with zero
+	// if current day is 2 , month is 5 then , output 02/05/2001
+	return fmt.Sprintf("%d-%02d-%02d", y, m, d)
 }
 
 func (rh *RequestHandler) Login(c *gin.Context) {
@@ -436,15 +431,21 @@ type BookingSlotDTO struct {
 func convertBookingsModelToDTO(bookings []model.Booking) []BookingSlotDTO {
 	var dtos []BookingSlotDTO
 	for _, booking := range bookings {
+		startTime := booking.StartDateTime.Format("15:04")
+		endTime := booking.EndDateTime.Format("15:04")
 		dtos = append(dtos, BookingSlotDTO{
-			ID: booking.ID,
+			ID:         booking.ID,
+			CalendarID: booking.CalendarID,
+			StartTime:  startTime,
+			EndTime:    endTime,
+			Status:     booking.Status,
 		})
 	}
 	return dtos
 }
 
 func (rh *RequestHandler) GetBookings(c *gin.Context) {
-	//selectedDateParam := c.Query("selected_date")
+	selectedDateParam := c.Query("selected_date")
 	selectedDayParam := c.Query("selected_day")
 	calendarIDParam := c.Query("calendar_id")
 
@@ -473,6 +474,12 @@ func (rh *RequestHandler) GetBookings(c *gin.Context) {
 		}
 	}
 
+	selectedDate, _ := time.Parse("2006-01-02", selectedDateParam)
+
+	bookings, err := rh.br.FindByCalendarIDAndBookingDate(calendarID, selectedDate)
+	if err != nil {
+
+	}
 	var bookingSlots []BookingSlotDTO
 	bookingSlotIndex := int64(0)
 	for _, slot := range selectedSlots {
@@ -481,12 +488,18 @@ func (rh *RequestHandler) GetBookings(c *gin.Context) {
 		for endTime.Compare(*slot.EndTime) < 0 {
 			currentEnd := startTime.Add(time.Duration(selectedCalendar.SlotTime) * time.Minute)
 			endTime = &currentEnd
+			status := "Available"
+			for _, b := range bookings {
+				if startTime.Equal(b.StartDateTime) {
+					status = "Not Available"
+				}
+			}
 			bookingSlots = append(bookingSlots, BookingSlotDTO{
 				ID:         bookingSlotIndex,
 				CalendarID: selectedCalendar.ID,
 				StartTime:  startTime.Format("15:04"),
 				EndTime:    endTime.Format("15:04"),
-				Status:     "pending",
+				Status:     status,
 			})
 			startTime = endTime
 		}
@@ -504,11 +517,35 @@ func (rh *RequestHandler) SaveBooking(c *gin.Context) {
 		return
 	}
 
-	err = rh.br.Save(toBookingModel(req, int64(1)))
+	session := sessions.Default(c)
+	createdBy := session.Get("user_id").(int64)
+
+	user, err := rh.userRespository.FindByEmail(req.Email)
+	if err != nil {
+		log.Error(err)
+	}
+
+	booking := toBookingModel(req, user.Id, createdBy)
+
+	err = rh.br.Save(booking)
 	if err != nil {
 		log.Error(err)
 		c.Status(500)
 		return
 	}
 
+}
+
+func (rh *RequestHandler) GetMyBookings(c *gin.Context) {
+	session := sessions.Default(c)
+	currentUserID := session.Get("user_id").(int64)
+	bookings, err := rh.br.FindByCreatedBy(currentUserID)
+	bookingDtoList := convertBookingsModelToDTO(bookings)
+	if err != nil {
+		log.Error(err)
+	}
+	log.Info(bookingDtoList)
+	c.HTML(200, "my_bookings.html", gin.H{
+		"Bookings": bookingDtoList,
+	})
 }

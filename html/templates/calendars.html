@@ -1,5 +1,5 @@
 <div class="row"
-    x-data="{ open: false , selected_calendar:'',selected_calendar_id:'', selected_date:'', show_select_date:false , show_bookings_list:false , selected_day:''}">
+    x-data="{ open: false , selected_calendar:'',selected_calendar_id:'', selected_date:'', show_select_date:false , show_bookings_list:false , selected_day:'',selected_email:'{{.Email}}'}">
     <div id="calendars_view" class="col-md-6" x-show="!open">
         <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
             <ol class="breadcrumb">
@@ -67,23 +67,14 @@
         </div>
     </div>
     <div class="col-md-8">
-        <div x-show="show_select_date">
-            <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item text-primary"> <a
-                            @click="open = false , selected_calendar=''"><span>Calendars</span></a> </li>
-                    <li class="breadcrumb-item text-primary">Date</li>
-                    <li class="breadcrumb-item active">Bookings</li>
-                </ol>
-            </nav>
-            <span>select date : </span>
-            <span x-text="selected_date"></span>
+        <div id="create_booking_result">
         </div>
-        <div id="timeslots_list" x-data="{bookings:[]}">
+        <div>
+            <div id="timeslots_list" x-data="{bookings:[]}">
+            </div>
         </div>
     </div>
     <script>
-
         async function getBookings(e) {
             let fetchPromise = await fetch("/bookings?calendar_id=" + this.selected_calendar_id + "&selected_date=" + this.selected_date + "&selected_day=" + this.selected_day)
             console.log(fetchPromise)
@@ -107,12 +98,23 @@
                         `<tr>
                         <td>${data[i].ID}</td>
                         <td>${data[i].StartTime}</td>
-                        <td>${data[i].EndTime}</td>
-                        <td>${data[i].Status}</td>
+                        <td>${data[i].EndTime}</td>`
+
+                    if (data[i].Status == 'Available') {
+                        bookingsHTML = bookingsHTML + `
+                        <td><span class="text-success">${data[i].Status}</span></td>
                         <td>
-                            <button class="btn btn-link btn-sm" x-on:click="createBooking(${this.selected_calendar_id},'${this.selected_date.toString()}','${new Date(data[i].StartDateTime).toString()}','${new Date(data[i].EndDateTime).toString()}')">book</button>
-                        </td>
-                    </tr>`
+                            <button class="btn btn-link btn-sm" x-on:click="createBooking(${this.selected_calendar_id},'${this.selected_date.toString()}','${String(data[i].StartTime)}','${String(data[i].EndTime)}','${this.selected_email}')">book</button>
+                        </td>`
+                    } else {
+                        bookingsHTML = bookingsHTML + `
+                        <td><span class="text-danger">${data[i].Status}</span></td>
+                        <td>
+            
+                        </td>`
+                    }
+
+                    bookingsHTML = bookingsHTML + `</tr>`
                 }
                 bookingsHTML = bookingsHTML + `</tbody>
                                                 </table>`
@@ -123,9 +125,9 @@
             request = `{
                 "calendar_id":${calendar_id},
                 "booking_date":"${selected_date}",
-                "start_time":${start_time},
-                "end_time":${end_time},
-                "email":""
+                "start_time":"${start_time}",
+                "end_time":"${end_time}",
+                "email":"${email}"
             }`;
             console.log(request)
             let fetchPromise = fetch("/bookings",
@@ -136,6 +138,13 @@
                         "Content-Type": "application/json",
                     }
                 })
+
+                if (fetchPromise.status == 200){
+                    console.log("success")
+                    document.getElementById('create_booking_result').innerHTML = `
+                    <span>booking created successfully</span>
+                    `
+                }
         }
     </script>
 </div>

@@ -3,6 +3,7 @@ package handler
 import (
 	"time"
 
+	"github.com/labstack/gommon/log"
 	"github.com/sreedharputtu/timeslothub-service/model"
 )
 
@@ -44,12 +45,26 @@ type CreateBookingRequestDTO struct {
 	Email       string `json:"email"`
 }
 
-func toBookingModel(dto CreateBookingRequestDTO, userID int64) model.Booking {
-	bookingDate, _ := time.Parse("01/02/2003", dto.BookingDate)
+func toBookingModel(dto CreateBookingRequestDTO, userID int64, createdBy int64) model.Booking {
+	bookingDate, err := time.Parse("2006-01-02", dto.BookingDate)
+	if err != nil {
+		log.Error(err)
+	}
+	startTime, err := time.Parse("15:04", dto.StartTime)
+	if err != nil {
+		log.Error(err)
+	}
+	endTime, err := time.Parse("15:04", dto.EndTime)
+	if err != nil {
+		log.Error(err)
+	}
 	return model.Booking{
-		UserID:      userID,
-		CalendarID:  dto.CalendarID,
-		Status:      "pending",
-		BookingDate: bookingDate,
+		UserID:        userID,
+		CalendarID:    dto.CalendarID,
+		Status:        "pending",
+		StartDateTime: startTime,
+		EndDateTime:   endTime,
+		BookingDate:   bookingDate,
+		CreatedBy:     createdBy,
 	}
 }

@@ -1,0 +1,27 @@
+<div x-data="">
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <td>id</td>
+            <td>start time</td>
+            <td>end time</td>
+            <td>status</td>
+            <td>action</td>
+        </tr>
+    </thead>
+    <tbody>
+        {{ range $i , $e := .Bookings}}
+        <tr>
+            <td>{{$e.ID}}</td>
+            <td>{{$e.StartTime}}</td>
+            <td>{{$e.EndTime}}</td>
+            <td>{{$e.Status}}</td>
+            <td>
+                <button class="btn btn-outline-primary btn-sm">accept</button>
+                <button class="btn btn-outline-danger btn-sm">reject</button>
+            </td>
+        </tr>
+        {{end}}
+    </tbody>
+</table>
+</div>

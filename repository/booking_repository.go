@@ -65,5 +65,5 @@ func (bri *BookingsRepositoryImpl) FindByUserIDAndBookingDate(userID int64, book
 
 // Save implements BookingRepository.
 func (bri *BookingsRepositoryImpl) Save(booking model.Booking) error {
-	return bri.DB.Save(booking).Error
+	return bri.DB.Save(&booking).Error
 }

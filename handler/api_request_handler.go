@@ -421,11 +421,13 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 }
 
 type BookingSlotDTO struct {
-	ID         int64
-	CalendarID int64
-	StartTime  string
-	EndTime    string
-	Status     string
+	ID           int64
+	CalendarID   int64
+	CalendarName string
+	Date         string
+	StartTime    string
+	EndTime      string
+	Status       string
 }
 
 func convertBookingsModelToDTO(bookings []model.Booking) []BookingSlotDTO {
@@ -433,9 +435,11 @@ func convertBookingsModelToDTO(bookings []model.Booking) []BookingSlotDTO {
 	for _, booking := range bookings {
 		startTime := booking.StartDateTime.Format("15:04")
 		endTime := booking.EndDateTime.Format("15:04")
+		bookingDate := booking.BookingDate.Format("2006-01-02")
 		dtos = append(dtos, BookingSlotDTO{
 			ID:         booking.ID,
 			CalendarID: booking.CalendarID,
+			Date:       bookingDate,
 			StartTime:  startTime,
 			EndTime:    endTime,
 			Status:     booking.Status,
@@ -534,6 +538,20 @@ func (rh *RequestHandler) SaveBooking(c *gin.Context) {
 		return
 	}
 
+}
+
+func (rh *RequestHandler) GetReceivedBookings(c *gin.Context) {
+	session := sessions.Default(c)
+	currentUserID := session.Get("user_id").(int64)
+	bookings, err := rh.br.FindByUserID(currentUserID)
+	bookingDtoList := convertBookingsModelToDTO(bookings)
+	if err != nil {
+		log.Error(err)
+	}
+	log.Info(bookingDtoList)
+	c.HTML(200, "received_bookings.html", gin.H{
+		"Bookings": bookingDtoList,
+	})
 }
 
 func (rh *RequestHandler) GetMyBookings(c *gin.Context) {

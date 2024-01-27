@@ -1,27 +1,31 @@
-<div x-data="">
-<table class="table table-hover table-striped">
+<div x-data="" style="margin-top: 20px;">
+    <h6>My Bookings</h6>
+    <div style="padding:20px;">
+<table class="table table-hover table-striped table-borderless table-sm">
     <thead>
         <tr>
-            <td>id</td>
-            <td>start time</td>
-            <td>end time</td>
-            <td>status</td>
-            <td>action</td>
+            <th>Id</th>
+            <th>Calendar Event</th>
+            <th>Contact Email</th>
+            <th>Date(yyyy-mm-dd)</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Status</th>
         </tr>
     </thead>
     <tbody>
         {{ range $i , $e := .Bookings}}
         <tr>
             <td>{{$e.ID}}</td>
+            <td></td>
+            <td></td>
+            <td>{{$e.Date}}</td>
             <td>{{$e.StartTime}}</td>
             <td>{{$e.EndTime}}</td>
             <td>{{$e.Status}}</td>
-            <td>
-                <button class="btn btn-outline-primary btn-sm">accept</button>
-                <button class="btn btn-outline-danger btn-sm">reject</button>
-            </td>
         </tr>
         {{end}}
     </tbody>
 </table>
+</div>
 </div>

@@ -55,7 +55,7 @@
                                 </td>
                                 {{range $i, $value := $v.Days}}
                                 <td>
-                                    <a style="padding:5px;margin:2px;" class="bg-light"
+                                    <a style="padding:5px;margin:2px;" class="btn btn-link"
                                         x-data="{selected_date:'{{$value.Date}}',selected_day:'{{$v.WeekDay}}'}"
                                         @click="getBookings , show_bookings_list=true">
                                         {{$value.Day}}

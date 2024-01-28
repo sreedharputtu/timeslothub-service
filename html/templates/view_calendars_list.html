@@ -1,17 +1,20 @@
 <div class="row">
-<div id="calendars_view" class="col-md-4">
+<div id="calendars_view" class="p-4">
     <h6> Active calendars</h6>
-    <div style="margin-top:20px;">
-    <table class="table table-hover table-striped">
-        {{ range $i , $e := .Calendars}}
-                    <tr hx-get="/api/v1/calendars/{{$e.ID}}/slots" hx-target="#slots_view">
-                        <td> {{ $e.ID }}</td>
-                        <td> <h6>{{ $e.CalendarName }}</h6></td>
-                    </tr>
-                
-        {{end}}
-    </table>
-</div>
+
+    {{ range $i , $e := .Calendars}}
+    <div class="stats shadow mt-10">
+        <div class="stat" style="cursor: pointer;" hx-get="/api/v1/calendars/{{$e.ID}}/slots" hx-target="#slots_view">
+          <div class="stat-title">{{ $e.ID }}</div>
+          <div class="text-xl text-primary">
+            <h1>
+            {{ $e.CalendarName }}
+          </h1>
+        </div>
+          <div class="stat-desc">slot time : 45 mins</div>
+        </div>
+    </div>
+    {{end}}
 </div>
 <div class="col-md-8" id="slots_view">
 </div>

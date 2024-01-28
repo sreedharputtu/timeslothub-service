@@ -251,8 +251,6 @@ func (r *RequestHandler) GetSlotsByCalendarID(c *gin.Context) {
 		return
 	}
 
-	convertSlotSettings(slots)
-
 	c.HTML(201, "slot_settings_table.html", gin.H{
 		"SlotSettingsList": convertSlotSettings(slots),
 	})

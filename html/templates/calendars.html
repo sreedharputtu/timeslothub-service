@@ -1,5 +1,3 @@
-
-
 <div class="grid md:grid-cols-3"
     x-data="{ open: false , selected_calendar:'',selected_calendar_id:'', selected_date:'', show_select_date:false , show_bookings_list:false , selected_day:'',selected_email:'{{.Email}}'}">
     <div id="calendars_view" x-show="!open" class="ml-5 ...">
@@ -7,7 +5,7 @@
             <li class="step step-primary">Select Calendar</li>
             <li class="step">Select Date</li>
             <li class="step">Create Booking</li>
-          </ul>
+        </ul>
 
         <table class="table table-hover table-striped">
             {{ range $i , $e := .Calendars}}
@@ -27,14 +25,14 @@
                     <li class="step step-primary">Select Calendar</li>
                     <li class="step step-primary">Select Date</li>
                     <li class="step">Create Booking</li>
-                  </ul>
-            <div>
-                <div class="mt-5 mb-5">
-                    <span>Selected Calendar Event </span>
-                    <h5><span x-text="selected_calendar" class="badge badge-success"></span></h5>
+                </ul>
+                <div>
+                    <div class="mt-5 mb-5">
+                        <span>Selected Calendar Event </span>
+                        <h5><span x-text="selected_calendar" class="badge badge-success"></span></h5>
+                    </div>
                 </div>
-            </div>
-            <h3>Select Date</h3>
+                <h3>Select Date</h3>
                 <div class="grid grid-cols-2 mt-5">
                     <div>
                         <span class="badge badge-primary">
@@ -68,12 +66,11 @@
                     </table>
                 </div>
 
-               
+
         </div>
     </div>
     <div class="... col-span-2 mt-10 p-5 ml-4">
         <div id="create_booking_result">
-            {{.Msg}}
         </div>
         <div>
             <div id="timeslots_list" x-data="{bookings:[]}">
@@ -144,13 +141,25 @@
                         "Content-Type": "application/json",
                     }
                 })
-
-                if (fetchPromise.status == 200){
-                    console.log("success")
-                    document.getElementById('create_booking_result').innerHTML = `
-                    <span>booking created successfully</span>
+            fetchPromise.then((response) => {
+                res_msg = ``
+                if (response.status == 200){
+                    res_msg = `
+                    <div role="alert" class="alert alert-success p-5">
+  <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+  <span>booking created!</span>
+</div>
                     `
+                }else{
+                    res_msg = `
+                    <div role="alert" class="alert alert-error p-5 mb-5">
+  <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+  <span>Error! Could not create booking.</span>
+</div>`
                 }
+
+                document.getElementById('create_booking_result').innerHTML = res_msg
+            })
         }
     </script>
 </div>

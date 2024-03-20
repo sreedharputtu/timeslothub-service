@@ -67,7 +67,13 @@ func NewRouter(rh *handler.RequestHandler) *gin.Engine {
 		ctx.HTML(201, "login.html", nil)
 	})
 
+	r.GET("/register", func(ctx *gin.Context) {
+		fmt.Println("inside register")
+		ctx.HTML(201, "register.html", nil)
+	})
+
 	r.POST("/user/login", rh.Login)
+	r.POST("/user/register", rh.Register)
 
 	r.GET("/bookings", rh.GetBookings)
 	r.POST("/bookings", rh.SaveBooking)

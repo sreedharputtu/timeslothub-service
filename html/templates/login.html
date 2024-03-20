@@ -28,33 +28,35 @@
 </style>
 </head>
 <body>
-    <div class="card w-96 bg-base-100 shadow-xl mt-10">
-        <figure><img src="/images/logo.svg" width="210px"></figure>
-        <div  class=" card-body m-auto">
-          <h3 class="card-title">Login to your account</h3>
-          <form class="form" action="/user/login" method="post">
-            <fieldset>
-                <div class="form-control mt-5">
-                    <label for="email">Email</label>
-                    <input type="text" class="input input-bordered w-full max-w-xs" name="email" id="login_email">
-                </div>
-                <div class="form-control mt-5">
-                    <label for="password">Password</label>
-                    <input type="password" class="input input-bordered w-full max-w-xs" name="password">
-                </div>
-                <div class="mt-5">
-                    <button   class="btn btn-primary btn-block"> Login </button>
-                </div>
-                <div class="grid grid-cols-2 mt-5">
-                    <div>
-                        <a href="#" class="link link-primary"> Forgot password </a>
+    <div class="flex items-center justify-center">
+        <div class="card w-96 bg-base-100 shadow-xl mt-10 ml-5  flex items-center justify-center">
+            <figure><img src="/images/logo.svg" width="210px"></figure>
+            <div  class=" card-body m-auto">
+              <span>Login to your account</span>
+              <form class="form" action="/user/login" method="post">
+                <fieldset>
+                    <div class="form-control mt-5">
+                        <label for="email">Email</label>
+                        <input type="text" class="input input-bordered w-full max-w-xs" name="email" id="login_email">
                     </div>
-                       <div>
-                        <a href="#" class="link link-primary"> Register </a>
-                       </div>
-                </div>
-            </fieldset>
-        </form>
-        </div>
-      </div>
+                    <div class="form-control mt-5">
+                        <label for="password">Password</label>
+                        <input type="password" class="input input-bordered w-full max-w-xs" name="password">
+                    </div>
+                    <div class="mt-5">
+                        <button   class="btn btn-primary btn-block"> Login </button>
+                    </div>
+                    <div class="grid grid-cols-2 mt-5">
+                        <div>
+                            <a href="#" class="link link-primary"> Forgot password? </a>
+                        </div> 
+                           <div class="ml-5">
+                            <a href="/register" class="link link-primary"> Register </a>
+                           </div>
+                    </div>
+                </fieldset>
+            </form>
+            </div>
+          </div>
+    </div>
 </body>

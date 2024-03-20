@@ -339,8 +339,6 @@ func cal(month int) []BookingsDays {
 }
 
 func prepareDate(d int, m time.Month, y int) string {
-	// prefixes day / month with zero
-	// if current day is 2 , month is 5 then , output 02/05/2001
 	return fmt.Sprintf("%d-%02d-%02d", y, m, d)
 }
 
@@ -415,6 +413,44 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 	// 	return
 	// }
 	c.Redirect(http.StatusFound, "/")
+
+}
+
+func (rh *RequestHandler) Register(c *gin.Context) {
+	email := c.Request.FormValue("email")
+	password := c.Request.FormValue("password")
+	name := c.Request.FormValue("full_name")
+	if email == "" || password == "" || name == "" {
+		c.JSON(400, gin.H{
+			"error": "email or password or name empty",
+		})
+		return
+	}
+
+	existingUser, err := rh.userRespository.FindByEmail(email)
+	if existingUser != nil {
+		c.JSON(500, gin.H{
+			"error": "user already exists",
+		})
+		return
+	}
+
+	//user.HashPassword(password)
+
+	user := model.User{}
+	user.Email = email
+	user.Name = name
+	user.Description = ""
+
+	user.HashPassword(password)
+
+	err = rh.userRespository.Save(user)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"error": "error while saving user",
+		})
+		return
+	}
 
 }
 

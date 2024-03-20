@@ -1,19 +1,26 @@
 package config
 
 import (
+	"fmt"
+	"log"
+
+	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-const (
-	host     = "localhost"
-	port     = 5432
-	user     = "dbwriter"
-	password = ""
-	db       = "timeslotdb"
-)
-
 func Database() (*gorm.DB, error) {
-	dsn := "host=localhost user=dbwriter password=dbwriter dbname=timeslotdb port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	viper.SetConfigFile(".env")
+	viper.ReadInConfig()
+
+	host := viper.GetString("DB_HOST")
+	port := viper.GetString("DB_PORT")
+	user := viper.GetString("DB_USER")
+	password := viper.GetString("DB_PASSWORD")
+	db := viper.GetString("DB_NAME")
+
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai", host, user, password, db, port)
+
+	log.Println(dsn)
 	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
 }

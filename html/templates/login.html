@@ -1,13 +1,13 @@
-<html>
-<head>
+<html data-theme="light">
+<head >
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://unpkg.com/htmx.org@1.9.9"
         integrity="sha384-QFjmbokDn2DjBjq+fM+8LUIVrAgqcNW2s0PjAxHETgRn9l4fvX31ZxDxvwQnyMOX"
         crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css" />
-    <script src="/static/bootstrap/js/bootstrap.min.js"></script>
-
+   
+        <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.min.css" rel="stylesheet" type="text/css" />
+        <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
@@ -15,6 +15,7 @@
     html,
     body {
       height: 100%;
+      width: 100%;
       font-family: "Roboto", sans-serif;
   font-weight: 400;
     }
@@ -27,35 +28,35 @@
 </style>
 </head>
 <body>
-    <div class="row justify-content-center" style="margin-top:50px;">
-        <div class="col-md-4" style="padding:50px;max-width: 400px;border:solid 1px;border-color: lightgray;">
-            <div style="text-align:center;padding:25px;">
-                <img src="/images/logo.svg" width="210px">
-            </div>
-            <h6>Sign in in to your account</h6>
-            <form class="form" action="/user/login" method="post">
+    <div class="flex items-center justify-center">
+        <div class="card w-96 bg-base-100 shadow-xl mt-10 ml-5  flex items-center justify-center">
+            <figure><img src="/images/logo.svg" width="210px"></figure>
+            <div  class=" card-body m-auto">
+              <span>Login to your account</span>
+              <form class="form" action="/user/login" method="post">
                 <fieldset>
-                    <div>
+                    <div class="form-control mt-5">
                         <label for="email">Email</label>
-                        <input type="text" class="form-control" name="email" id="login_email">
+                        <input type="text" class="input input-bordered w-full max-w-xs" name="email" id="login_email">
                     </div>
-                    <div>
+                    <div class="form-control mt-5">
                         <label for="password">Password</label>
-                        <input type="password" class="form-control" name="password">
+                        <input type="password" class="input input-bordered w-full max-w-xs" name="password">
                     </div>
-                    <div class="row" style="padding:10px;" >
+                    <div class="mt-5">
                         <button   class="btn btn-primary btn-block"> Login </button>
                     </div>
-                    <div class="row" style="margin-top:20px;">
-                        <div class="col">
-                            <a href="#"> Forgot password </a>
-                        </div>
-                        <div class="col">
-                            <a href="#"> Register </a>
-                        </div>
+                    <div class="grid grid-cols-2 mt-5">
+                        <div>
+                            <a href="#" class="link link-primary"> Forgot password? </a>
+                        </div> 
+                           <div class="ml-5">
+                            <a href="/register" class="link link-primary"> Register </a>
+                           </div>
                     </div>
                 </fieldset>
             </form>
-        </div>
+            </div>
+          </div>
     </div>
 </body>

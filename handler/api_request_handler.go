@@ -30,22 +30,30 @@ type RequestHandler struct {
 	br                     repository.BookingRepository
 }
 
-func Health(c *gin.Context) {
-	c.Status(http.StatusOK)
+type Day struct {
+	Day  int
+	Date string
 }
 
-func (r *RequestHandler) SaveUser(c *gin.Context) {
-	user := model.User{
-		Name:        c.Request.FormValue("name"),
-		Email:       c.Request.FormValue("email"),
-		Description: c.Request.FormValue("description"),
-	}
-	err := r.userRespository.Save(user)
-	if err != nil {
-		c.Status(http.StatusInternalServerError)
-		return
-	}
-	c.HTML(201, "bookings.html", nil)
+type BookingsDays struct {
+	WeekDay string
+	Days    []Day
+	Month   int
+	Year    int
+}
+
+type BookingSlotDTO struct {
+	ID           int64
+	CalendarID   int64
+	CalendarName string
+	Date         string
+	StartTime    string
+	EndTime      string
+	Status       string
+}
+
+func Health(c *gin.Context) {
+	c.Status(http.StatusOK)
 }
 
 func (r *RequestHandler) SaveMyCalendar(c *gin.Context) {
@@ -159,10 +167,6 @@ func (r *RequestHandler) BookingsCalendar(c *gin.Context) {
 	c.HTML(201, "bookings_select_date.html", gin.H{"Calendar": calendar, "Order": weekdayOrder})
 }
 
-func (r *RequestHandler) UpdateCalenderSettings(c *gin.Context) {
-
-}
-
 func (r *RequestHandler) GetMyCalenders(c *gin.Context) {
 	session := sessions.Default(c)
 	userIDRaw := session.Get("user_id")
@@ -251,24 +255,10 @@ func (r *RequestHandler) GetSlotsByCalendarID(c *gin.Context) {
 		return
 	}
 
-	convertSlotSettings(slots)
-
 	c.HTML(201, "slot_settings_table.html", gin.H{
 		"SlotSettingsList": convertSlotSettings(slots),
 	})
 
-}
-
-type BookingsDays struct {
-	WeekDay string
-	Days    []Day
-	Month   int
-	Year    int
-}
-
-type Day struct {
-	Day  int
-	Date string
 }
 
 func cal(month int) []BookingsDays {
@@ -341,11 +331,10 @@ func cal(month int) []BookingsDays {
 }
 
 func prepareDate(d int, m time.Month, y int) string {
-	// prefixes day / month with zero
-	// if current day is 2 , month is 5 then , output 02/05/2001
 	return fmt.Sprintf("%d-%02d-%02d", y, m, d)
 }
 
+// User Handler
 func (rh *RequestHandler) Login(c *gin.Context) {
 	email := c.Request.FormValue("email")
 	password := c.Request.FormValue("password")
@@ -367,14 +356,7 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 		return
 	}
 
-	if email == "sreedharputtu@gmail.com" {
-		user.HashPassword("123456789")
-	}
-
-	if email == "swathiputtu@gmail.com" {
-		user.HashPassword("912345678")
-	}
-
+	user.HashPassword(password)
 	err = user.CheckPassword(password)
 	if err != nil {
 		log.Error(err)
@@ -408,27 +390,57 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 	if err != nil {
 		log.Error("error while saving session", err)
 	}
-	// refreshToken, err := jwtWrapper.RefreshToken(user.Email)
-	// if err != nil {
-	// 	c.JSON(500, gin.H{
-	// 		"Error": "Error Signing Token",
-	// 	})
-	// 	c.Abort()
-	// 	return
-	// }
 	c.Redirect(http.StatusFound, "/")
-
 }
 
-type BookingSlotDTO struct {
-	ID           int64
-	CalendarID   int64
-	CalendarName string
-	Date         string
-	StartTime    string
-	EndTime      string
-	Status       string
+func (rh *RequestHandler) Register(c *gin.Context) {
+	email := c.Request.FormValue("email")
+	password := c.Request.FormValue("password")
+	name := c.Request.FormValue("full_name")
+	if email == "" || password == "" || name == "" {
+		c.JSON(400, gin.H{
+			"msg": "email or password or name empty",
+		})
+		return
+	}
+
+	// Check if password contains at least one special character
+	specialCharRegex := regexp.MustCompile(`[!@#$%^&*(),.?":{}|<>]`)
+	if !specialCharRegex.MatchString(password) {
+		c.JSON(400, gin.H{
+			"msg": `password should be more than 8 characters, 
+				should contain at least one special character`,
+		})
+		return
+	}
+
+	existingUser, err := rh.userRespository.FindByEmail(email)
+	if existingUser != nil {
+		c.JSON(500, gin.H{
+			"msg": "user already exists",
+		})
+		return
+	}
+
+	user := model.User{}
+	user.Email = email
+	user.Name = name
+	user.Description = ""
+
+	user.HashPassword(password)
+
+	err = rh.userRespository.Save(user)
+	if err != nil {
+		c.JSON(500, gin.H{
+			"msg": "error while saving user",
+		})
+		return
+	}
+
+	c.HTML(201, "login.html", gin.H{})
 }
+
+//Bookings Handler
 
 func convertBookingsModelToDTO(bookings []model.Booking) []BookingSlotDTO {
 	var dtos []BookingSlotDTO

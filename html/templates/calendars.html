@@ -1,11 +1,11 @@
-<div class="row"
+<div class="grid md:grid-cols-3"
     x-data="{ open: false , selected_calendar:'',selected_calendar_id:'', selected_date:'', show_select_date:false , show_bookings_list:false , selected_day:'',selected_email:'{{.Email}}'}">
-    <div id="calendars_view" class="col-md-6" x-show="!open">
-        <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item active">Calendars</li>
-            </ol>
-        </nav>
+    <div id="calendars_view" x-show="!open" class="ml-5 ...">
+        <ul class="steps mb-5">
+            <li class="step step-primary">Select Calendar</li>
+            <li class="step">Select Date</li>
+            <li class="step">Create Booking</li>
+        </ul>
 
         <table class="table table-hover table-striped">
             {{ range $i , $e := .Calendars}}
@@ -18,55 +18,58 @@
             {{end}}
         </table>
     </div>
-    <div id="select_calendar_date" class="col-md-4" x-show="open">
+    <div id="select_calendar_date" x-show="open" class="ml-5 ...">
         <div>
             <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item text-primary"> <a
-                            @click="open = false , selected_calendar=''"><span>Calendars</span></a> </li>
-                    <li class="breadcrumb-item active">Date</li>
-                </ol>
-            </nav>
-            <div>
-                <span>selected calendar </span>
-                <div style="margin-top:20px;margin-bottom: 20px;">
-                    <h5><span x-text="selected_calendar" class="bg-light text-dark"></span></h5>
+                <ul class="steps mb-5">
+                    <li class="step step-primary">Select Calendar</li>
+                    <li class="step step-primary">Select Date</li>
+                    <li class="step">Create Booking</li>
+                </ul>
+                <div>
+                    <div class="mt-5 mb-5">
+                        <span>Selected Calendar Event </span>
+                        <h5><span x-text="selected_calendar" class="badge badge-success"></span></h5>
+                    </div>
                 </div>
-            </div>
-            <span>select date <span></span>
-                <div class="row" style="margin-top: 20px;margin-bottom: 20px;">
-                    <div class="col-6">
-                        <span class="badge bg-primary">
+                <h3>Select Date</h3>
+                <div class="grid grid-cols-2 mt-5">
+                    <div>
+                        <span class="badge badge-primary">
                             {{.CurrentMonth}}
                         </span>
                     </div>
-                    <div class="col-6">
+                    <div>
                         <a href="#">Next</a>
                     </div>
                 </div>
-                <table>
-                    <tbody>
-                        {{range $i , $v := .CurrentCalendar }}
-                        <tr style="height: 40px;">
-                            <td>
-                                {{$v.WeekDay}}
-                            </td>
-                            {{range $i, $value := $v.Days}}
-                            <td>
-                                <a style="padding:5px;margin:2px;" class="bg-light"
-                                    x-data="{selected_date:'{{$value.Date}}',selected_day:'{{$v.WeekDay}}'}"
-                                    @click="getBookings , show_bookings_list=true">
-                                    {{$value.Day}}
-                                </a>
-                            </td>
+                <div class="card bg-base-100 shadow-xl p-2" style="max-width: 300px;">
+                    <table>
+                        <tbody>
+                            {{range $i , $v := .CurrentCalendar }}
+                            <tr style="height: 40px;">
+                                <td>
+                                    {{$v.WeekDay}}
+                                </td>
+                                {{range $i, $value := $v.Days}}
+                                <td>
+                                    <a style="padding:5px;margin:2px;" class="btn btn-link"
+                                        x-data="{selected_date:'{{$value.Date}}',selected_day:'{{$v.WeekDay}}'}"
+                                        @click="getBookings , show_bookings_list=true">
+                                        {{$value.Day}}
+                                    </a>
+                                </td>
+                                {{end}}
+                            </tr>
                             {{end}}
-                        </tr>
-                        {{end}}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
+
+
         </div>
     </div>
-    <div class="col-md-8">
+    <div class="... col-span-2 mt-10 p-5 ml-4">
         <div id="create_booking_result">
         </div>
         <div>
@@ -81,7 +84,7 @@
             fetchPromise.json().then((data) => {
                 var bookingsHTML = ""
                 bookingsHTML = bookingsHTML +
-                    `<table class='table table-striped table-borderless table-sm'>
+                    `<table class='table table-sm'>
                     <thead>   
                     <tr>
                             <th>id</th>
@@ -138,13 +141,25 @@
                         "Content-Type": "application/json",
                     }
                 })
-
-                if (fetchPromise.status == 200){
-                    console.log("success")
-                    document.getElementById('create_booking_result').innerHTML = `
-                    <span>booking created successfully</span>
+            fetchPromise.then((response) => {
+                res_msg = ``
+                if (response.status == 200){
+                    res_msg = `
+                    <div role="alert" class="alert alert-success p-5">
+  <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+  <span>booking created!</span>
+</div>
                     `
+                }else{
+                    res_msg = `
+                    <div role="alert" class="alert alert-error p-5 mb-5">
+  <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+  <span>Error! Could not create booking.</span>
+</div>`
                 }
+
+                document.getElementById('create_booking_result').innerHTML = res_msg
+            })
         }
     </script>
 </div>

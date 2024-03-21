@@ -2,13 +2,13 @@ package handler
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/labstack/gommon/log"
 )
 
 type JwtWrapper struct {
@@ -27,7 +27,7 @@ func (j *JwtWrapper) GenerateToken(email string) (signedToken string, err error)
 	claims := &JwtClaim{
 		Email: email,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Local().Add(time.Minute * time.Duration(j.ExpirationMinutes)).Unix(),
+			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(j.ExpirationHours)).Unix(),
 			Issuer:    j.Issuer,
 		},
 	}
@@ -80,14 +80,12 @@ func (j *JwtWrapper) ValidateToken(signedToken string) (claims *JwtClaim, err er
 
 func AuthRequired() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		// Get the Authorization header from the request
-
 		var clientToken interface{}
 		session := sessions.Default(c)
 		clientToken = session.Get("state")
 
 		if clientToken == nil {
-			fmt.Println("client token is empty")
+			log.Error("client token is empty")
 			c.Redirect(http.StatusFound, "/login")
 			c.Abort()
 			return
@@ -101,15 +99,13 @@ func AuthRequired() gin.HandlerFunc {
 		// Validate the token
 		claims, err := jwtWrapper.ValidateToken(clientToken.(string))
 		if err != nil {
-			fmt.Println("client token is invalid")
+			log.Error("Error validating token: ", err)
 			c.Redirect(http.StatusFound, "/login")
 			c.Abort()
 			return
 		}
-		// Set the claims in the context
 		c.Set("email", claims.Email)
-		fmt.Println("auth successfull")
-		// Continue to the next handler
+		log.Info("auth successfull , email:", claims.Email)
 		c.Next()
 	}
 }

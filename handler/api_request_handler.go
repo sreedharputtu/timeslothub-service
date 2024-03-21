@@ -30,22 +30,30 @@ type RequestHandler struct {
 	br                     repository.BookingRepository
 }
 
-func Health(c *gin.Context) {
-	c.Status(http.StatusOK)
+type Day struct {
+	Day  int
+	Date string
 }
 
-func (r *RequestHandler) SaveUser(c *gin.Context) {
-	user := model.User{
-		Name:        c.Request.FormValue("name"),
-		Email:       c.Request.FormValue("email"),
-		Description: c.Request.FormValue("description"),
-	}
-	err := r.userRespository.Save(user)
-	if err != nil {
-		c.Status(http.StatusInternalServerError)
-		return
-	}
-	c.HTML(201, "bookings.html", nil)
+type BookingsDays struct {
+	WeekDay string
+	Days    []Day
+	Month   int
+	Year    int
+}
+
+type BookingSlotDTO struct {
+	ID           int64
+	CalendarID   int64
+	CalendarName string
+	Date         string
+	StartTime    string
+	EndTime      string
+	Status       string
+}
+
+func Health(c *gin.Context) {
+	c.Status(http.StatusOK)
 }
 
 func (r *RequestHandler) SaveMyCalendar(c *gin.Context) {
@@ -159,10 +167,6 @@ func (r *RequestHandler) BookingsCalendar(c *gin.Context) {
 	c.HTML(201, "bookings_select_date.html", gin.H{"Calendar": calendar, "Order": weekdayOrder})
 }
 
-func (r *RequestHandler) UpdateCalenderSettings(c *gin.Context) {
-
-}
-
 func (r *RequestHandler) GetMyCalenders(c *gin.Context) {
 	session := sessions.Default(c)
 	userIDRaw := session.Get("user_id")
@@ -257,18 +261,6 @@ func (r *RequestHandler) GetSlotsByCalendarID(c *gin.Context) {
 
 }
 
-type BookingsDays struct {
-	WeekDay string
-	Days    []Day
-	Month   int
-	Year    int
-}
-
-type Day struct {
-	Day  int
-	Date string
-}
-
 func cal(month int) []BookingsDays {
 	// Get current month and year
 	now := time.Now()
@@ -342,6 +334,7 @@ func prepareDate(d int, m time.Month, y int) string {
 	return fmt.Sprintf("%d-%02d-%02d", y, m, d)
 }
 
+// User Handler
 func (rh *RequestHandler) Login(c *gin.Context) {
 	email := c.Request.FormValue("email")
 	password := c.Request.FormValue("password")
@@ -363,14 +356,7 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 		return
 	}
 
-	if email == "sreedharputtu@gmail.com" {
-		user.HashPassword("123456789")
-	}
-
-	if email == "swathiputtu@gmail.com" {
-		user.HashPassword("912345678")
-	}
-
+	user.HashPassword(password)
 	err = user.CheckPassword(password)
 	if err != nil {
 		log.Error(err)
@@ -404,16 +390,7 @@ func (rh *RequestHandler) Login(c *gin.Context) {
 	if err != nil {
 		log.Error("error while saving session", err)
 	}
-	// refreshToken, err := jwtWrapper.RefreshToken(user.Email)
-	// if err != nil {
-	// 	c.JSON(500, gin.H{
-	// 		"Error": "Error Signing Token",
-	// 	})
-	// 	c.Abort()
-	// 	return
-	// }
 	c.Redirect(http.StatusFound, "/")
-
 }
 
 func (rh *RequestHandler) Register(c *gin.Context) {
@@ -422,7 +399,17 @@ func (rh *RequestHandler) Register(c *gin.Context) {
 	name := c.Request.FormValue("full_name")
 	if email == "" || password == "" || name == "" {
 		c.JSON(400, gin.H{
-			"error": "email or password or name empty",
+			"msg": "email or password or name empty",
+		})
+		return
+	}
+
+	// Check if password contains at least one special character
+	specialCharRegex := regexp.MustCompile(`[!@#$%^&*(),.?":{}|<>]`)
+	if !specialCharRegex.MatchString(password) {
+		c.JSON(400, gin.H{
+			"msg": `password should be more than 8 characters, 
+				should contain at least one special character`,
 		})
 		return
 	}
@@ -430,12 +417,10 @@ func (rh *RequestHandler) Register(c *gin.Context) {
 	existingUser, err := rh.userRespository.FindByEmail(email)
 	if existingUser != nil {
 		c.JSON(500, gin.H{
-			"error": "user already exists",
+			"msg": "user already exists",
 		})
 		return
 	}
-
-	//user.HashPassword(password)
 
 	user := model.User{}
 	user.Email = email
@@ -447,22 +432,15 @@ func (rh *RequestHandler) Register(c *gin.Context) {
 	err = rh.userRespository.Save(user)
 	if err != nil {
 		c.JSON(500, gin.H{
-			"error": "error while saving user",
+			"msg": "error while saving user",
 		})
 		return
 	}
 
+	c.HTML(201, "login.html", gin.H{})
 }
 
-type BookingSlotDTO struct {
-	ID           int64
-	CalendarID   int64
-	CalendarName string
-	Date         string
-	StartTime    string
-	EndTime      string
-	Status       string
-}
+//Bookings Handler
 
 func convertBookingsModelToDTO(bookings []model.Booking) []BookingSlotDTO {
 	var dtos []BookingSlotDTO

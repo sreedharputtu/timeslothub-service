@@ -19,41 +19,32 @@ func NewRouter(rh *handler.RequestHandler) *gin.Engine {
 	r.Static("/images", "./html/images")
 	r.StaticFS("/static", http.Dir("./static"))
 
-	rg := r.Group("/api/v1")
-	rg.POST("/users", rh.SaveUser)
-	rg.PUT("/users/:user_id")
-	rg.POST("my/calendars", rh.SaveMyCalendar)
-	rg.GET("my/calendars", rh.GetMyCalenders)
-	rg.GET("/calendars", rh.GetCalenders)
-	rg.GET("/calendars/:calendar_id/slots", rh.GetSlotsByCalendarID)
-	rg.POST("/slots", rh.SaveSlot)
-	//rg.GET("/slots/settings/:user_id", rh.GetCalenderSettings)
-	//rg.PUT("/slots/settings/:slot_id", rh.GetCalenderSettings)
-
 	r.GET("/pages/my/calendars/list", rh.GetMyCalenders)
-	r.GET("/pages/bookings", rh.BookingsCalendar)
 
 	protected := r.Group("")
-	//protected.Use(handler.AuthRequired())
-
+	protected.Use(handler.AuthRequired())
 	protected.GET("/", func(ctx *gin.Context) {
 		session := sessions.Default(ctx)
 		email := session.Get("user_email")
 		ctx.HTML(201, "index.html", gin.H{"Email": email})
 	})
 
-	///views/calendars/settings
-	protected.GET("/pages/my/calendars/create", func(ctx *gin.Context) {
+	//apis
+	protected.POST("/api/v1/my/calendars", rh.SaveMyCalendar)
+	protected.GET("/api/v1/my/calendars", rh.GetMyCalenders)
+	protected.GET("/api/v1/calendars", rh.GetCalenders)
+	protected.GET("/api/v1/calendars/:calendar_id/slots", rh.GetSlotsByCalendarID)
+	protected.POST("/api/v1/slots", rh.SaveSlot)
+
+	//pages
+	protected.GET("/page/bookings", rh.BookingsCalendar)
+	protected.GET("/page/my/calendars/create", func(ctx *gin.Context) {
 		ctx.HTML(201, "create_calendar.html", gin.H{})
 	})
-
-	protected.GET("/views/slots/settings", func(ctx *gin.Context) {
+	protected.GET("/page/slots/settings", func(ctx *gin.Context) {
 		ctx.HTML(201, "slot_settings.html", gin.H{})
 	})
-
-	protected.GET("/views/slots/bookings", rh.BookingsCalendar)
-
-	//protected.GET("/views/timeslots", rh.TimeSlots)
+	protected.GET("/page/slots/bookings", rh.BookingsCalendar)
 
 	protected.GET("/user_logout", func(ctx *gin.Context) {
 		session := sessions.Default(ctx)

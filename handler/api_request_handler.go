@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	timeformat = "^[0-2][0-3]:[0-5][0-9]+$"
+	timeformat = "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"
 )
 
 func NewRequestHandler(userRepository repository.UsersRepository, ssr repository.SlotSettingsRepository, cri repository.CalendarSettingsRepository, br repository.BookingRepository) *RequestHandler {
@@ -115,23 +115,26 @@ func (r *RequestHandler) SaveSlot(c *gin.Context) {
 
 	match, err := regexp.MatchString(timeformat, startTimeStr)
 	if err != nil || !match {
-		log.Error(err)
+		log.Errorf("starttimestr:%s,err:%v", startTimeStr, err)
 		c.Status(400)
 		return
 	}
 
 	match, err = regexp.MatchString(timeformat, endTimeStr)
 	if err != nil || !match {
-		log.Error(err)
+		log.Errorf("endtimestr:%s,err:%v", endTimeStr, err)
 		c.Status(400)
 		return
 	}
 
 	startTime, err := time.Parse("15:04", startTimeStr)
-	log.Info(fmt.Sprintf("start time:%v", startTime))
-
 	endTime, err := time.Parse("15:04", endTimeStr)
-	log.Info(fmt.Sprintf("end time:%v", endTime))
+
+	if startTime.After(endTime) {
+		log.Error("start time is after end time")
+		c.Status(400)
+		return
+	}
 
 	log.Debug("day_of_week:", dayOfWeek)
 

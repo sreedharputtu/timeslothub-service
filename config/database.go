@@ -22,5 +22,5 @@ func Database() (*gorm.DB, error) {
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai", host, user, password, db, port)
 
 	log.Println(dsn)
-	return gorm.Open(postgres.Open(os.Getenv("DATABASE_URL")), &gorm.Config{})
+	return gorm.Open(postgres.Open(dsn), &gorm.Config{})
 }
